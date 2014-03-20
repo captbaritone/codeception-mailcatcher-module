@@ -13,7 +13,7 @@ features.
 
 ## Installation
 
-Add into your composer.json:
+Add the package into your composer.json:
 
     {
         "require-dev": {
@@ -21,6 +21,10 @@ Add into your composer.json:
             "captbaritone/mailcatcher-codeception-module": "*"
         }
     }
+
+Tell Composer to download the package:
+
+    php composer.phar update
 
 Then enable it in your `acceptance.suite.yml` configuration and set the url and
 port of your site's MailCatcher installation:
