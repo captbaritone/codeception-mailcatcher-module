@@ -74,6 +74,21 @@ class MailCatcher extends Module
     }
 
     /**
+     * Grab Matches From Last Email
+     *
+     * Look for a regex in the email source and return it's matches
+     *
+     * @return array
+     * @author Stephan Hochhaus <stephan@yauh.de>
+     **/
+    public function grabMatchesFromLastEmail($regex)
+    {
+        $email = $this->lastMessage();
+        $matches = $this->grabMatchesFromEmail($email, $regex);
+        return $matches;
+    }
+
+    /**
      * Grab From Last Email
      *
      * Look for a regex in the email source and return it
@@ -83,9 +98,24 @@ class MailCatcher extends Module
      **/
     public function grabFromLastEmail($regex)
     {
-        $email = $this->lastMessage();
-        $matches = grabMatchesFromEmail($email, $regex);
-        return $matches[1];
+        $matches = $this->grabMatchesFromLastEmail($regex);
+        return $matches[0];
+    }
+
+    /**
+     * Grab Matches From Last Email To
+     *
+     * Look for a regex in most recent email sent to $addres email source and
+     * return it's matches
+     *
+     * @return array
+     * @author Stephan Hochhaus <stephan@yauh.de>
+     **/
+    public function grabMatchesFromLastEmailTo($address, $regex)
+    {
+        $email = $this->lastMessageFrom($address);
+        $matches = $this->grabMatchesFromEmail($email, $regex);
+        return $matches;
     }
 
     /**
@@ -99,9 +129,8 @@ class MailCatcher extends Module
      **/
     public function grabFromLastEmailTo($address, $regex)
     {
-        $email = $this->lastMessageFrom($address);
-        $matches = grabMatchesFromEmail($email, $regex);
-        return $matches[1];
+        $matches = $this->grabMatchesFromLastEmailTo($address, $regex);
+        return $matches[0];
     }
 
     // ----------- HELPER METHODS BELOW HERE -----------------------//
@@ -201,6 +230,8 @@ class MailCatcher extends Module
     protected function grabMatchesFromEmail($email, $regex)
     {
         preg_match($regex, $email['source'], $matches);
+        $this->assertNotEmpty($matches, "No matches found for $regex");
         return $matches;
     }
+
 }

@@ -98,6 +98,21 @@ Example:
 * Param $email
 * Param $text
 
+### grabMatchesFromLastEmail
+
+Extracts an array of matches and sub-matches from the last email based on
+a regular expression. It searches the full raw text of the email: headers,
+subject line, and body. The return value is an array like that returned by
+`preg_match()`.
+
+Example:
+
+    <?php
+    $matches = $I->grabMatchesFromLastEmail('@<strong>(.*)</strong>@');
+    ?>
+
+* Param $regex
+
 ### grabFromLastEmail
 
 Extracts a string from the last email based on a regular expression.
@@ -106,9 +121,25 @@ It searches the full raw text of the email: headers, subject line, and body.
 Example:
 
     <?php
-    $I->grabFromLastEmail('@<strong>(.*)</strong>@');
+    $match = $I->grabFromLastEmail('@<strong>(.*)</strong>@');
     ?>
 
+* Param $regex
+
+### grabMatchesFromLastEmailTo
+
+Extracts an array of matches and sub-matches from the last email to a given
+address based on a regular expression. It searches the full raw text of the
+email: headers, subject line, and body. The return value is an array like that
+returned by `preg_match()`.
+
+Example:
+
+    <?php
+    $matchs = $I->grabMatchesFromLastEmailTo('user@example.com', '@<strong>(.*)</strong>@');
+    ?>
+
+* Param $email
 * Param $regex
 
 ### grabFromLastEmailTo
@@ -120,7 +151,7 @@ line, and body.
 Example:
 
     <?php
-    $I->grabFromLastEmailTo('user@example.com', '@<strong>(.*)</strong>@');
+    $match = $I->grabFromLastEmailTo('user@example.com', '@<strong>(.*)</strong>@');
     ?>
 
 * Param $email
