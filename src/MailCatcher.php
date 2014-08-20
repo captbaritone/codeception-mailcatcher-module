@@ -204,8 +204,8 @@ class MailCatcher extends Module
     {
         $response = $this->mailcatcher->get("/messages/{$id}.json")->send();
         $message = $response->json();
-		$message['source'] = quoted_printable_decode($message['source']);
-		return $message;
+        $message['source'] = quoted_printable_decode($message['source']);
+        return $message;
     }
 
     /**
