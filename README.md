@@ -102,6 +102,10 @@ Example:
 * Param $email
 * Param $text
 
+### dontSeeInLastEmail, dontSeeInLastEmailTo
+
+Checks that the last email/last email sent to an address does NOT contain a value. 
+
 ### grabMatchesFromLastEmail
 
 Extracts an array of matches and sub-matches from the last email based on

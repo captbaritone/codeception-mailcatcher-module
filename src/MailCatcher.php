@@ -59,6 +59,19 @@ class MailCatcher extends Module
     }
 
     /**
+     * Don't See In Last Email
+     *
+     * Look for the absence of a string in the most recent email
+     *
+     * @return void
+     **/
+    public function dontSeeInLastEmail($unexpected)
+    {
+        $email = $this->lastMessage();
+        $this->dontSeeInEmail($email, $unexpected);
+    }
+
+    /**
      * See In Last Email To
      *
      * Look for a string in the most recent email sent to $address
@@ -71,6 +84,18 @@ class MailCatcher extends Module
         $email = $this->lastMessageFrom($address);
         $this->seeInEmail($email, $expected);
 
+    }
+    /**
+     * Don't See In Last Email To
+     *
+     * Look for the absence of a string in the most recent email sent to $address
+     *
+     * @return void
+     **/
+    public function dontSeeInLastEmailTo($address, $unexpected)
+    {
+        $email = $this->lastMessageFrom($address);
+        $this->dontSeeInEmail($email, $unexpected);
     }
 
     /**
@@ -222,6 +247,18 @@ class MailCatcher extends Module
     }
 
     /**
+     * Don't See In Email
+     *
+     * Look for the absence of a string in an email
+     *
+     * @return void
+     **/
+    protected function dontSeeInEmail($email, $unexpected)
+    {
+        $this->assertNotContains($unexpected, $email['source'], "Email Does Contain");
+    }
+
+    /**
      * Grab From Email
      *
      * Return the matches of a regex against the raw email
@@ -237,3 +274,4 @@ class MailCatcher extends Module
     }
 
 }
+
