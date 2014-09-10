@@ -3,8 +3,6 @@
 This module will let you test emails that are sent during your Codeception
 acceptance tests. It depends upon you having
 [MailCatcher](http://mailcatcher.me/) installed on your development server.
-I have it installed as part of my [development virtual
-machine](https://github.com/captbaritone/vagrant-lamp).
 
 It was inspired by the Codeception blog post: [Testing Email in
 PHP](http://codeception.com/12-15-2013/testing-emails-in-php). It is currently
