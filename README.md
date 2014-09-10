@@ -102,9 +102,32 @@ Example:
 * Param $email
 * Param $text
 
-### dontSeeInLastEmail, dontSeeInLastEmailTo
+### dontSeeInLastEmail
 
-Checks that the last email/last email sent to an address does NOT contain a value. 
+Checks that an email does NOT contain a value. It searches the full raw text of the
+email: headers, subject line, and body.
+
+Example:
+
+    <?php
+    $I->dontSeeInLastEmail('Hit me with those laser beams');
+    ?>
+
+* Param $text
+
+### dontSeeInLastEmailTo
+
+Checks that the last email sent to an address does NOT contain a value. It searches the
+full raw text of the email: headers, subject line, and body.
+
+Example:
+
+    <?php
+    $I->dontSeeInLastEmailTo('admin@example.com', 'But shoot it in the right direction');
+    ?>
+
+* Param $email
+* Param $text
 
 ### grabMatchesFromLastEmail
 
