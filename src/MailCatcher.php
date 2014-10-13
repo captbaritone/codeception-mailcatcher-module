@@ -206,7 +206,7 @@ class MailCatcher extends Module
      **/
     protected function lastMessageFrom($address)
     {
-        $messages = $this->messages();
+        $messages = array_reverse($this->messages(), true);
         foreach ($messages as $message) {
             foreach ($message['recipients'] as $recipient) {
                 if (strpos($recipient, $address) !== false) {
