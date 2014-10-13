@@ -59,6 +59,33 @@ class MailCatcher extends Module
     }
 
     /**
+     * See In Last Email subject
+     *
+     * Look for a string in the most recent email subject
+     *
+     * @return void
+     * @author Antoine Augusti <antoine.augusti@gmail.com>
+     **/
+    public function seeInLastEmailSubject($expected)
+    {
+        $email = $this->lastMessage();
+        $this->seeInEmailSubject($email, $expected);
+    }
+
+    /**
+     * Don't See In Last Email subject
+     *
+     * Look for the absence of a string in the most recent email subject
+     *
+     * @return void
+     **/
+    public function dontSeeInLastEmailSubject($expected)
+    {
+        $email = $this->lastMessage();
+        $this->dontSeeInEmailSubject($email, $expected);
+    }
+
+    /**
      * Don't See In Last Email
      *
      * Look for the absence of a string in the most recent email
@@ -96,6 +123,33 @@ class MailCatcher extends Module
     {
         $email = $this->lastMessageFrom($address);
         $this->dontSeeInEmail($email, $unexpected);
+    }
+
+    /**
+     * See In Last Email Subject To
+     *
+     * Look for a string in the most recent email subject sent to $address
+     *
+     * @return void
+     * @author Antoine Augusti <antoine.augusti@gmail.com>
+     **/
+    public function seeInLastEmailSubjectTo($address, $expected)
+    {
+        $email = $this->lastMessageFrom($address);
+        $this->seeInEmailSubject($email, $expected);
+
+    }
+    /**
+     * Don't See In Last Email Subject To
+     *
+     * Look for the absence of a string in the most recent email subject sent to $address
+     *
+     * @return void
+     **/
+    public function dontSeeInLastEmailSubjectTo($address, $unexpected)
+    {
+        $email = $this->lastMessageFrom($address);
+        $this->dontSeeInEmailSubject($email, $unexpected);
     }
 
     /**
@@ -231,6 +285,31 @@ class MailCatcher extends Module
         $message = $response->json();
         $message['source'] = quoted_printable_decode($message['source']);
         return $message;
+    }
+
+    /**
+     * See In Subject
+     *
+     * Look for a string in an email subject
+     *
+     * @return void
+     * @author Antoine Augusti <antoine.augusti@gmail.com>
+     **/
+    protected function seeInEmailSubject($email, $expected)
+    {
+        $this->assertContains($expected, $email['subject'], "Email Subject Contains");
+    }
+
+    /**
+     * Don't See In Subject
+     *
+     * Look for the absence of a string in an email subject
+     *
+     * @return void
+     **/
+    protected function dontSeeInEmailSubject($email, $unexpected)
+    {
+        $this->assertNotContains($unexpected, $email['subject'], "Email Subject Does Contain");
     }
 
     /**
