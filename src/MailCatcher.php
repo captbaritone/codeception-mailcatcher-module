@@ -260,14 +260,19 @@ class MailCatcher extends Module
      **/
     protected function lastMessageFrom($address)
     {
-        $messages = array_reverse($this->messages(), true);
-        foreach ($messages as $message) {
+        $ids = [];
+
+        foreach ($this->messages() as $message) {
             foreach ($message['recipients'] as $recipient) {
                 if (strpos($recipient, $address) !== false) {
-                    return $this->emailFromId($message['id']);
+                    $ids[] = $message['id'];
                 }
             }
         }
+
+        if (count($ids) > 0)
+            return $this->emailFromId(max($ids));
+
         $this->fail("No messages sent to {$address}");
     }
 
