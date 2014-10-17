@@ -309,7 +309,7 @@ class MailCatcher extends Module
      **/
     protected function dontSeeInEmailSubject($email, $unexpected)
     {
-        $this->assertNotContains($unexpected, $email['subject'], "Email Subject Does Contain");
+        $this->assertNotContains($unexpected, $email['subject'], "Email Subject Does Not Contain");
     }
 
     /**
@@ -334,7 +334,7 @@ class MailCatcher extends Module
      **/
     protected function dontSeeInEmail($email, $unexpected)
     {
-        $this->assertNotContains($unexpected, $email['source'], "Email Does Contain");
+        $this->assertNotContains($unexpected, $email['source'], "Email Does Not Contain");
     }
 
     /**
