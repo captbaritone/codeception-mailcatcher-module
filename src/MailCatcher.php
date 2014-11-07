@@ -24,7 +24,7 @@ class MailCatcher extends Module
 
     public function _initialize()
     {
-        $url = $this->config['url'] . ':' . $this->config['port'];
+        $url = trim($this->config['url'], '/') . ':' . $this->config['port'];
         $this->mailcatcher = new \Guzzle\Http\Client($url);
     }
 
@@ -358,4 +358,3 @@ class MailCatcher extends Module
     }
 
 }
-
