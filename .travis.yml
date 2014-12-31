@@ -1,0 +1,18 @@
+language: php
+php:
+  - 5.5
+  #- 5.4
+  #- 5.3
+  #- hhvm
+before_install:
+  - gem install mailcatcher
+  #- mailcatcher
+  # Temporary workaround for https://github.com/sj26/mailcatcher/issues/182
+  - mailcatcher -f > out.txt&
+  - echo "sendmail_path = /usr/bin/env catchmail -f some@from.address" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - cd test
+  - composer install
+  - mkdir tests/_log
+  - php vendor/bin/codecept build
+
+script: php vendor/bin/codecept run -d

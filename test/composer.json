@@ -1,0 +1,14 @@
+{
+    "name": "codeception-mailcatcher-module/test",
+    "description": "Test suite for the codeception-mailcatcher-module",
+    "authors": [
+        {
+            "name": "Jordan Eldredge",
+            "email": "jordan@jordaneldredge.com"
+        }
+    ],
+    "require": {
+        "codeception/codeception": "*",
+        "captbaritone/mailcatcher-codeception-module": "dev-master"
+    }
+}
