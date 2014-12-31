@@ -3,7 +3,7 @@
 class MailcatcherCest
 {
     public function _after(\NoGuy $I) {
-        // Cleared old emails from MailCatcher
+        // Clear old emails from MailCatcher
         $I->resetEmails();
     }
 
