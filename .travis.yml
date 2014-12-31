@@ -1,4 +1,10 @@
 language: php
+env:
+    - CODECEPTION_VERSION="1.6"
+    - CODECEPTION_VERSION="1.7"
+    - CODECEPTION_VERSION="1.8"
+    - CODECEPTION_VERSION="2.0"
+    - CODECEPTION_VERSION="dev-master"
 php:
   - 5.5
   #- 5.4
@@ -11,7 +17,8 @@ before_install:
   - mailcatcher -f > out.txt&
   - echo "sendmail_path = /usr/bin/env catchmail -f some@from.address" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - cd test
-  - composer install
+  - composer require codeception/codeception:${CODECEPTION_VERSION}
+  - composer update
   - mkdir tests/_log
   - php vendor/bin/codecept build
 
