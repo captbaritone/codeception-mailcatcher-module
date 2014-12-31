@@ -47,4 +47,13 @@ class MailcatcherCest
         $matches = $I->grabMatchesFromLastEmail("/Hello (World)/");
         $I->assertEquals($matches, array('Hello World', 'World'));
     }
+
+    public function test_reset_emails(\NoGuy $I)
+    {
+        $body = "Hello World!";
+        mail('user@example.com', 'Subject Line', $body);
+        $I->seeEmailCount(1);
+        $I->resetEmails();
+        $I->seeEmailCount(0);
+    }
 }
