@@ -191,7 +191,7 @@ Example:
 ### seeEmailCount
 
 Asserts that a certain number of emails have been sent since the last time
-`resetEails()` was called.
+`resetEmails()` was called.
 
 Example:
 
