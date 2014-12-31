@@ -188,6 +188,19 @@ Example:
 * Param $email
 * Param $regex
 
+### seeEmailCount
+
+Asserts that a certain number of emails have been sent since the last time
+`resetEails()` was called.
+
+Example:
+
+    <?php
+    $match = $I->seeEmailCount(2);
+    ?>
+
+* Param $count
+
 # License
 
 Released under the same liceces as Codeception: MIT
