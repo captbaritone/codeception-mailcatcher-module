@@ -212,6 +212,19 @@ class MailCatcher extends Module
         return $matches[0];
     }
 
+    /**
+     * Test email count equals expected value
+     *
+     * @return void
+     * @author Mike Crowe <drmikecrowe@gmail.com>
+     **/
+    public function seeEmailCount($expected)
+    {
+        $messages = $this->messages();
+        $count = count($messages);
+        $this->assertEquals($count,$expected);
+    }
+
     // ----------- HELPER METHODS BELOW HERE -----------------------//
 
     /**
@@ -226,10 +239,6 @@ class MailCatcher extends Module
     {
         $response = $this->mailcatcher->get('/messages')->send();
         $messages = $response->json();
-        if (empty($messages)) {
-            $this->fail("No messages received");
-        }
-
         return $messages;
     }
 
@@ -244,6 +253,9 @@ class MailCatcher extends Module
     protected function lastMessage()
     {
         $messages = $this->messages();
+        if (empty($messages)) {
+            $this->fail("No messages received");
+        }
 
         $last = array_shift($messages);
 
@@ -261,8 +273,12 @@ class MailCatcher extends Module
     protected function lastMessageFrom($address)
     {
         $ids = [];
+        $messages = $this->messages();
+        if (empty($messages)) {
+            $this->fail("No messages received");
+        }
 
-        foreach ($this->messages() as $message) {
+        foreach ($messages as $message) {
             foreach ($message['recipients'] as $recipient) {
                 if (strpos($recipient, $address) !== false) {
                     $ids[] = $message['id'];
