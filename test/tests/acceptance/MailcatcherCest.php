@@ -41,12 +41,10 @@ class MailcatcherCest
         $I->dontSeeInLastEmailTo($user, $body);
     }
 
-    /* Disabled because the meta-test can't run on old versions of codeception
     public function try_to_grab_matches_from_an_email(\NoGuy $I)
     {
         mail("user@example.com", 'Subject Line',  "Hello World!");
         $matches = $I->grabMatchesFromLastEmail("/Hello (World)/");
         $I->assertEquals($matches, array('Hello World', 'World'));
     }
-    */
 }
