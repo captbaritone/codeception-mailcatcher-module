@@ -2,7 +2,8 @@ cass_name: NoGuy
 modules:
     enabled:
         - MailCatcher
-        - Asserts
+        # Disabled because it can't run on old versions of codeception
+        #- Asserts
     config:
         MailCatcher:
             url: 'http://localhost'
