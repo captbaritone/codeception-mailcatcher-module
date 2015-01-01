@@ -239,6 +239,9 @@ class MailCatcher extends Module
     {
         $response = $this->mailcatcher->get('/messages')->send();
         $messages = $response->json();
+        // Ensure messages are shown in the order they were recieved
+        // https://github.com/sj26/mailcatcher/pull/184
+        usort($messages, array($this, 'messageSortCompare'));
         return $messages;
     }
 
@@ -371,6 +374,12 @@ class MailCatcher extends Module
         preg_match($regex, $email['source'], $matches);
         $this->assertNotEmpty($matches, "No matches found for $regex");
         return $matches;
+    }
+
+    static function messageSortCompare($messageA, $messageB) {
+        $sortKeyA = $messageA['created_at'] . $messageA['id'];
+        $sortKeyB = $messageB['created_at'] . $messageB['id'];
+        return ($sortKeyA > $sortKeyB) ? -1 : 1;
     }
 
 }

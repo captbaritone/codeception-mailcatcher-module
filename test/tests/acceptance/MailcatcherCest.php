@@ -34,7 +34,6 @@ class MailcatcherCest
     {
         $subject = 'Subject Line';
         mail('user@example.com', $subject, "Hello World!");
-        sleep(1); // Prevents a race condition
         mail('user@example.com', 'Another Subject', "Hello World!");
         $I->dontSeeInLastEmailSubject($subject);
     }
@@ -43,7 +42,6 @@ class MailcatcherCest
     {
         $body = "Hello World!";
         mail('user@example.com', 'Subject Line', $body);
-        sleep(1); // Prevents a race condition
         mail('user@example.com', 'Subject Line', "Goodbye World!");
         $I->dontSeeInLastEmail($body);
     }
