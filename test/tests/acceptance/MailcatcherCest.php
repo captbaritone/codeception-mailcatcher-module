@@ -19,30 +19,30 @@ class MailcatcherCest
     public function test_see_in_last_email(\NoGuy $I)
     {
         $body = "Hello World!";
-        mail('user@example.com', 'Subject Line', $body);
+        mail('user@example.com', 'Subject Line', $body, 'From:no-reply@example.com');
         $I->seeInLastEmail($body);
     }
 
     public function test_see_in_last_email_subject(\NoGuy $I)
     {
         $subject = 'Subject Line';
-        mail('user@example.com', $subject, "Hello World!");
+        mail('user@example.com', $subject, "Hello World!", 'From:no-reply@example.com');
         $I->seeInLastEmailSubject($subject);
     }
 
     public function test_dont_see_in_last_email_subject(\NoGuy $I)
     {
         $subject = 'Subject Line';
-        mail('user@example.com', $subject, "Hello World!");
-        mail('user@example.com', 'Another Subject', "Hello World!");
+        mail('user@example.com', $subject, "Hello World!", 'From:no-reply@example.com');
+        mail('user@example.com', 'Another Subject', "Hello World!", 'From:no-reply@example.com');
         $I->dontSeeInLastEmailSubject($subject);
     }
 
     public function test_dont_see_in_last_email(\NoGuy $I)
     {
         $body = "Hello World!";
-        mail('user@example.com', 'Subject Line', $body);
-        mail('user@example.com', 'Subject Line', "Goodbye World!");
+        mail('user@example.com', 'Subject Line', $body, 'From:no-reply@example.com');
+        mail('user@example.com', 'Subject Line', "Goodbye World!", 'From:no-reply@example.com');
         $I->dontSeeInLastEmail($body);
     }
 
@@ -50,8 +50,8 @@ class MailcatcherCest
     {
         $body = "Hello World!";
         $user = "userA@example.com";
-        mail($user, 'Subject Line', $body);
-        mail('userB@example.com', 'Subject Line', "Goodbye Word!");
+        mail($user, 'Subject Line', $body, 'From:no-reply@example.com');
+        mail('userB@example.com', 'Subject Line', "Goodbye Word!", 'From:no-reply@example.com');
         $I->seeInLastEmailTo($user, $body);
     }
 
@@ -59,8 +59,8 @@ class MailcatcherCest
     {
         $body = "Goodbye Word!";
         $user = "userA@example.com";
-        mail($user, 'Subject Line',  "Hello World!");
-        mail('userB@example.com', 'Subject Line', $body);
+        mail($user, 'Subject Line',  "Hello World!", 'From:no-reply@example.com');
+        mail('userB@example.com', 'Subject Line', $body, 'From:no-reply@example.com');
         $I->dontSeeInLastEmailTo($user, $body);
     }
 
@@ -68,8 +68,8 @@ class MailcatcherCest
     {
         $subject = 'Subject Line';
         $user = "userA@example.com";
-        mail($user, $subject, "Hello World!");
-        mail('userB@example.com', 'Subject Line', "Goodbye Word!");
+        mail($user, $subject, "Hello World!", 'From:no-reply@example.com');
+        mail('userB@example.com', 'Subject Line', "Goodbye Word!", 'From:no-reply@example.com');
         $I->seeInLastEmailSubjectTo($user, $subject);
     }
 
@@ -77,21 +77,21 @@ class MailcatcherCest
     {
         $subject = "Subject Line";
         $user = "userA@example.com";
-        mail($user, 'Nothing to see here', "Hello World!");
-        mail('userB@example.com', $subject, "Hello World!");
+        mail($user, 'Nothing to see here', "Hello World!", 'From:no-reply@example.com');
+        mail('userB@example.com', $subject, "Hello World!", 'From:no-reply@example.com');
         $I->dontSeeInLastEmailSubjectTo($user, $subject);
     }
 
     public function test_grab_matches_from_last_email(\NoGuy $I)
     {
-        mail("user@example.com", 'Subject Line',  "Hello World!");
+        mail("user@example.com", 'Subject Line',  "Hello World!", 'From:no-reply@example.com');
         $matches = $I->grabMatchesFromLastEmail("/Hello (World)/");
         $I->assertEquals($matches, array('Hello World', 'World'));
     }
 
     public function test_grab_from_last_email(\NoGuy $I)
     {
-        mail("user@example.com", 'Subject Line',  "Hello World!");
+        mail("user@example.com", 'Subject Line',  "Hello World!", 'From:no-reply@example.com');
         $match = $I->grabFromLastEmail("/Hello (World)/");
         $I->assertEquals($match, "Hello World");
     }
@@ -99,8 +99,8 @@ class MailcatcherCest
     public function test_grab_matches_from_last_email_to(\NoGuy $I)
     {
         $user = "user@example.com";
-        mail($user, 'Subject Line',  "Hello World!");
-        mail("userB@example.com", 'Subject Line',  "Nothing to see here");
+        mail($user, 'Subject Line',  "Hello World!", 'From:no-reply@example.com');
+        mail("userB@example.com", 'Subject Line',  "Nothing to see here", 'From:no-reply@example.com');
         $matches = $I->grabMatchesFromLastEmailTo($user, "/Hello (World)/");
         $I->assertEquals($matches, array('Hello World', 'World'));
     }
@@ -108,8 +108,8 @@ class MailcatcherCest
     public function test_grab_from_last_email_to(\NoGuy $I)
     {
         $user = "user@example.com";
-        mail($user, 'Subject Line',  "Hello World!");
-        mail("userB@example.com", 'Subject Line',  "Nothing to see here");
+        mail($user, 'Subject Line',  "Hello World!", 'From:no-reply@example.com');
+        mail("userB@example.com", 'Subject Line',  "Nothing to see here", 'From:no-reply@example.com');
         $match = $I->grabFromLastEmailTo($user, "/Hello (World)/");
         $I->assertEquals($match, "Hello World");
     }
