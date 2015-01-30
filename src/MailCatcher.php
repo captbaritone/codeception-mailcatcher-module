@@ -222,7 +222,7 @@ class MailCatcher extends Module
     {
         $messages = $this->messages();
         $count = count($messages);
-        $this->assertEquals($count,$expected);
+        $this->assertEquals($expected, $count);
     }
 
     // ----------- HELPER METHODS BELOW HERE -----------------------//
