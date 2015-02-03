@@ -7,9 +7,9 @@ env:
     - CODECEPTION_VERSION="dev-master"
 php:
   - 5.5
-  #- 5.4
+  - 5.4
   #- 5.3
-  #- hhvm
+  - hhvm
 before_install:
   - gem install mailcatcher
   #- mailcatcher
