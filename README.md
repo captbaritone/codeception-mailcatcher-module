@@ -42,7 +42,7 @@ port of your site's MailCatcher installation:
 
     <?php
 
-    $I = new WebGuy\AdminSteps($scenario);
+    $I = new WebGuy($scenario);
     $I->wantTo('Get a password reset email');
 
     // Cleared old emails from MailCatcher
