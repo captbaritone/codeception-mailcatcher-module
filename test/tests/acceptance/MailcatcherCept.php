@@ -1,4 +1,4 @@
-<?php 
+<?php
 $I = new NoGuy($scenario);
 $I->wantTo('Run a Mailcatcher cept test');
 
