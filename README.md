@@ -18,7 +18,7 @@ Add the package into your composer.json:
     {
         "require-dev": {
             "codeception/codeception": "*",
-            "captbaritone/mailcatcher-codeception-module": "dev-master"
+            "captbaritone/mailcatcher-codeception-module": "1.*"
         }
     }
 
