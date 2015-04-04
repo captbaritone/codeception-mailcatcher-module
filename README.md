@@ -38,6 +38,10 @@ port of your site's MailCatcher installation:
                 url: 'http://project.dev'
                 port: '1080'
 
+You will then need to rebuild your actor class:
+
+    php codecept.phar build
+
 ## Example Usage
 
     <?php
