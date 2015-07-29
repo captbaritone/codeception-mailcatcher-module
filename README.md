@@ -38,6 +38,22 @@ port of your site's MailCatcher installation:
                 url: 'http://project.dev'
                 port: '1080'
 
+If you need to specify some special options (e.g. SSL verification or authentication
+headers), you can specify all of the allowed [Guzzle options](https://guzzle.readthedocs.org/en/5.3/clients.html#request-options):
+
+    class_name: WebGuy
+    modules:
+        enabled:
+            - MailCatcher
+        config:
+            MailCatcher:
+                url: 'http://project.dev'
+                port: '1080'
+                defaultOptions:
+                    verify: false
+                    debug: true
+                    version: 1.0
+
 You will then need to rebuild your actor class:
 
     php codecept.phar build
