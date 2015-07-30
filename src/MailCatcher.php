@@ -14,7 +14,7 @@ class MailCatcher extends Module
     /**
      * @var array
      */
-    protected $config = array('url', 'port', 'defaultOptions');
+    protected $config = array('url', 'port', 'guzzleRequestOptions');
 
     /**
      * @var array
@@ -26,8 +26,8 @@ class MailCatcher extends Module
         $url = trim($this->config['url'], '/') . ':' . $this->config['port'];
         $this->mailcatcher = new \Guzzle\Http\Client($url);
 
-        if (isset($this->config['defaultOptions'])) {
-            foreach ($this->config['defaultOptions'] as $option => $value) {
+        if (isset($this->config['guzzleRequestOptions'])) {
+            foreach ($this->config['guzzleRequestOptions'] as $option => $value) {
                 $this->mailcatcher->setDefaultOption($option, $value);
             }
         }
