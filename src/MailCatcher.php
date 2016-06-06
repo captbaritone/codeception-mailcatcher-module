@@ -144,6 +144,7 @@ class MailCatcher extends Module
         $this->seeInEmailSubject($email, $expected);
 
     }
+
     /**
      * Don't See In Last Email Subject To
      *
@@ -155,6 +156,27 @@ class MailCatcher extends Module
     {
         $email = $this->lastMessageFrom($address);
         $this->dontSeeInEmailSubject($email, $unexpected);
+    }
+
+    /**
+     * Grab the full email object sent to an address.
+     *
+     * @param string $address
+     * @return array
+     */
+    public function grabLastEmailTo($address)
+    {
+      return $this->lastMessageFrom($address);
+    }
+
+    /**
+     * Grab the full email object from the last email.
+     *
+     * @return array
+     */
+    public function grabLastEmail()
+    {
+      return $this->lastMessage();
     }
 
     /**
