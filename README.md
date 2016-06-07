@@ -183,6 +183,28 @@ Example:
 
 * Param $regex
 
+### lastMessageFrom
+
+Grab the full email object sent to an address.
+
+Example:
+
+    <?php
+    $email = $I->lastMessageFrom('example@example.com');
+    $I->assertNotEmpty($email['attachments']);
+    ?>
+
+### lastMessage
+
+Grab the full email object from the last email.
+
+Example:
+
+    <?php
+    $email = $I->grabLastEmail();
+    $I->assertNotEmpty($email['attachments']);
+    ?>
+
 ### grabMatchesFromLastEmailTo
 
 Extracts an array of matches and sub-matches from the last email to a given

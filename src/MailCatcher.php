@@ -144,6 +144,7 @@ class MailCatcher extends Module
         $this->seeInEmailSubject($email, $expected);
 
     }
+
     /**
      * Don't See In Last Email Subject To
      *
@@ -155,6 +156,56 @@ class MailCatcher extends Module
     {
         $email = $this->lastMessageFrom($address);
         $this->dontSeeInEmailSubject($email, $unexpected);
+    }
+
+    /**
+     * Last Message
+     *
+     * Get the most recent email
+     *
+     * @return obj
+     * @author Jordan Eldredge <jordaneldredge@gmail.com>
+     **/
+    public function lastMessage()
+    {
+      $messages = $this->messages();
+      if (empty($messages)) {
+        $this->fail("No messages received");
+      }
+
+      $last = array_shift($messages);
+
+      return $this->emailFromId($last['id']);
+    }
+
+    /**
+     * Last Message From
+     *
+     * Get the most recent email sent to $address
+     *
+     * @return obj
+     * @author Jordan Eldredge <jordaneldredge@gmail.com>
+     **/
+    public function lastMessageFrom($address)
+    {
+      $ids = [];
+      $messages = $this->messages();
+      if (empty($messages)) {
+        $this->fail("No messages received");
+      }
+
+      foreach ($messages as $message) {
+        foreach ($message['recipients'] as $recipient) {
+          if (strpos($recipient, $address) !== false) {
+            $ids[] = $message['id'];
+          }
+        }
+      }
+
+      if (count($ids) > 0)
+        return $this->emailFromId(max($ids));
+
+      $this->fail("No messages sent to {$address}");
     }
 
     /**
@@ -248,56 +299,6 @@ class MailCatcher extends Module
         // https://github.com/sj26/mailcatcher/pull/184
         usort($messages, array($this, 'messageSortCompare'));
         return $messages;
-    }
-
-    /**
-     * Last Message
-     *
-     * Get the most recent email
-     *
-     * @return obj
-     * @author Jordan Eldredge <jordaneldredge@gmail.com>
-     **/
-    protected function lastMessage()
-    {
-        $messages = $this->messages();
-        if (empty($messages)) {
-            $this->fail("No messages received");
-        }
-
-        $last = array_shift($messages);
-
-        return $this->emailFromId($last['id']);
-    }
-
-    /**
-     * Last Message From
-     *
-     * Get the most recent email sent to $address
-     *
-     * @return obj
-     * @author Jordan Eldredge <jordaneldredge@gmail.com>
-     **/
-    protected function lastMessageFrom($address)
-    {
-        $ids = [];
-        $messages = $this->messages();
-        if (empty($messages)) {
-            $this->fail("No messages received");
-        }
-
-        foreach ($messages as $message) {
-            foreach ($message['recipients'] as $recipient) {
-                if (strpos($recipient, $address) !== false) {
-                    $ids[] = $message['id'];
-                }
-            }
-        }
-
-        if (count($ids) > 0)
-            return $this->emailFromId(max($ids));
-
-        $this->fail("No messages sent to {$address}");
     }
 
     /**
