@@ -11,8 +11,9 @@ php:
   #- 5.3
   #- hhvm
 before_install:
-  - gem install mailcatcher
-  #- mailcatcher
+  - gem install mime-types --version "< 3"
+  - gem install --conservative mailcatcher > /dev/null 2>&1
+  - mailcatcher
   # Temporary workaround for https://github.com/sj26/mailcatcher/issues/182
   - mailcatcher -f > out.txt&
   - echo "sendmail_path = /usr/bin/env catchmail -f some@from.address" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
