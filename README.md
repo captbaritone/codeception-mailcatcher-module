@@ -183,25 +183,25 @@ Example:
 
 * Param $regex
 
-### grabLastEmailTo
+### lastMessageFrom
 
 Grab the full email object sent to an address.
 
 Example:
 
     <?php
-    $email = $I->grabLastEmailTo('example@example.com');
+    $email = $I->lastMessageFrom('example@example.com');
     $I->assertNotEmpty($email['attachments']);
     ?>
 
-### grabLastEmail
+### lastMessage
 
 Grab the full email object from the last email.
 
 Example:
 
     <?php
-    $email = $I->grabLastEmail;
+    $email = $I->grabLastEmail();
     $I->assertNotEmpty($email['attachments']);
     ?>
 
