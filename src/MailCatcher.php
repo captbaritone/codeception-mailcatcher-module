@@ -7,7 +7,7 @@ use Codeception\Module;
 class MailCatcher extends Module
 {
     /**
-     * @var \Guzzle\Http\Client
+     * @var \GuzzleHttp\Client
      */
     protected $mailcatcher;
 
@@ -23,8 +23,8 @@ class MailCatcher extends Module
 
     public function _initialize()
     {
-        $url = trim($this->config['url'], '/') . ':' . $this->config['port'];
-        $this->mailcatcher = new \Guzzle\Http\Client($url);
+        $base_uri = trim($this->config['url'], '/') . ':' . $this->config['port'];
+        $this->mailcatcher = new \GuzzleHttp\Client(['base_uri' => $base_uri]);
 
         if (isset($this->config['guzzleRequestOptions'])) {
             foreach ($this->config['guzzleRequestOptions'] as $option => $value) {
@@ -45,7 +45,7 @@ class MailCatcher extends Module
      **/
     public function resetEmails()
     {
-        $this->mailcatcher->delete('/messages')->send();
+        $this->mailcatcher->delete('/messages');
     }
 
 
@@ -293,8 +293,8 @@ class MailCatcher extends Module
      **/
     protected function messages()
     {
-        $response = $this->mailcatcher->get('/messages')->send();
-        $messages = $response->json();
+        $response = $this->mailcatcher->get('/messages');
+        $messages = json_decode($response->getBody(), true);
         // Ensure messages are shown in the order they were recieved
         // https://github.com/sj26/mailcatcher/pull/184
         usort($messages, array($this, 'messageSortCompare'));
@@ -311,8 +311,8 @@ class MailCatcher extends Module
      **/
     protected function emailFromId($id)
     {
-        $response = $this->mailcatcher->get("/messages/{$id}.json")->send();
-        $message = $response->json();
+        $response = $this->mailcatcher->get("/messages/{$id}.json");
+        $message = json_decode($response->getBody(), true);
         $message['source'] = quoted_printable_decode($message['source']);
         return $message;
     }
