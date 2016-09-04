@@ -15,6 +15,6 @@
     ],
     "require": {
         "codeception/codeception": "*",
-        "captbaritone/mailcatcher-codeception-module": "dev-master"
+        "captbaritone/mailcatcher-codeception-module": "dev-fix-guzzle-options"
     }
 }

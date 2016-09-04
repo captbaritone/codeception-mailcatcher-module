@@ -113,4 +113,17 @@ class MailcatcherCest
         $match = $I->grabFromLastEmailTo($user, "/Hello (World)/");
         $I->assertEquals($match, "Hello World");
     }
+
+    public function test_guzzle_request_options(\NoGuy $I)
+    {
+        // We've configurd Guzzle to `sink` to `./guzzle_sink.json`
+        $I->deleteFile('./guzzle_sink.json');
+        mail("user@example.com", 'Testing Sink',  "Hello World!", 'From:no-reply@example.com');
+        // Let's trigger some request
+        $match = $I->seeInLastEmail("Testing Sink");
+
+        // Now let's assert that the file was written
+        $I->openFile('./guzzle_sink.json');
+        $I->seeInThisFile('Testing Sink');
+    }
 }

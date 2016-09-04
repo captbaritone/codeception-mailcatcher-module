@@ -24,13 +24,13 @@ class MailCatcher extends Module
     public function _initialize()
     {
         $base_uri = trim($this->config['url'], '/') . ':' . $this->config['port'];
-        $this->mailcatcher = new \GuzzleHttp\Client(['base_uri' => $base_uri]);
-
-        if (isset($this->config['guzzleRequestOptions'])) {
-            foreach ($this->config['guzzleRequestOptions'] as $option => $value) {
-                $this->mailcatcher->setDefaultOption($option, $value);
-            }
-        }
+        $default_guzzle_options = ['base_uri' => $base_uri];
+        $guzzle_options = array_merge(
+            $default_guzzle_options,
+            $this->config['guzzleRequestOptions']
+        );
+        print_r($guzzle_options);
+        $this->mailcatcher = new \GuzzleHttp\Client($guzzle_options);
     }
 
 

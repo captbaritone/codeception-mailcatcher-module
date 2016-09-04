@@ -3,7 +3,11 @@ modules:
     enabled:
         - MailCatcher
         - Asserts
+        - Filesystem
     config:
         MailCatcher:
             url: 'http://localhost'
             port: '1080'
+            guzzleRequestOptions:
+                # Add an arbirary testable option so we can assert these work
+                sink: './guzzle_sink.json'
