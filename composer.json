@@ -8,7 +8,7 @@
         }
     ],
     "require": {
-        "guzzlehttp/guzzle": ">=6.0"
+        "guzzlehttp/guzzle": "*"
     },
     "autoload": {
         "psr-4": {
