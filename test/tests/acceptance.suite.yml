@@ -10,5 +10,4 @@ modules:
             port: '1080'
             guzzleRequestOptions:
                 # Add an arbirary testable option so we can assert these work
-                debug: true
                 sink: './guzzle_sink.json'
