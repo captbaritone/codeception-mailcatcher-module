@@ -21,10 +21,15 @@ class MailCatcher extends Module
      */
     protected $requiredFields = array('url', 'port');
 
+	/**
+	 * @var string
+	 */
+	protected $base_uri;
+
     public function _initialize()
     {
-        $base_uri = trim($this->config['url'], '/') . ':' . $this->config['port'];
-        $this->mailcatcher = new \GuzzleHttp\Client(['base_uri' => $base_uri]);
+        $this->base_uri = trim($this->config['url'], '/') . ':' . $this->config['port'];
+        $this->mailcatcher = new \GuzzleHttp\Client(['base_uri' => $this->base_uri]);
 
         if (isset($this->config['guzzleRequestOptions'])) {
             foreach ($this->config['guzzleRequestOptions'] as $option => $value) {
@@ -177,6 +182,22 @@ class MailCatcher extends Module
 
       return $this->emailFromId($last['id']);
     }
+
+	/**
+	 * Get the URL for viewing the HTML content of the most recent email.
+	 *
+	 * @return string
+	 */
+	public function lastMessageHtmlUrl() {
+		$messages = $this->messages();
+		if ( empty( $messages ) ) {
+			$this->fail( "No messages received" );
+		}
+
+		$last = array_shift( $messages );
+
+		return sprintf( '%s/messages/%d.html', $this->base_uri, $last['id'] );
+	}
 
     /**
      * Last Message From
