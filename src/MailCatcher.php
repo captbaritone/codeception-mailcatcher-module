@@ -240,7 +240,7 @@ class MailCatcher extends Module
         }
 
         $getIds = function ($ids, $message) {
-            if (strpos($message->sender, $address) !== false) {
+            if (strpos($message['sender'], $address) !== false) {
                 $ids[] = $message['id'];
             }
             return $ids;
