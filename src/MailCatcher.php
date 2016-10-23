@@ -239,16 +239,15 @@ class MailCatcher extends Module
             $this->fail("No messages received");
         }
 
-        $getIds = function ($ids, $message) use ($address) {
+        $matchSender = function ($ids, $message) use ($address) {
             if (strpos($message['sender'], $address) !== false) {
-                $ids[] = $message['id'];
+                return true;
             }
-            return $ids;
+            return false;
         };
 
-        $ids = array_reduce($messages,
-                            $getIds,
-                            []);
+        $filteredMessages = $this->filterMessages($messages, $matchSender);
+        $ids = $this->pickAttribute($messages, 'id');
 
         if (count($ids) > 0) {
             return $this->emailFromId(max($ids));
@@ -437,4 +436,25 @@ class MailCatcher extends Module
         return ($sortKeyA > $sortKeyB) ? -1 : 1;
     }
 
+    protected function filterMessages($messages, $fn) {
+        $filter = function($messages, $message) use ($fn) {
+            if ($fn($message) === true) {
+                $messages[] = $message;
+            }
+
+            return $message;
+        };
+
+        return array_reduce($messages
+                            ,$filter
+                            ,[]);
+    }
+
+    protected function pickAttribute($messages, $attr) {
+        $pick = function($message) use ($attr) {
+            return $message[$attr];
+        };
+
+        return array_map($messages, $pick);
+    }
 }
