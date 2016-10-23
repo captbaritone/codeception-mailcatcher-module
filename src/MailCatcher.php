@@ -226,7 +226,7 @@ class MailCatcher extends Module
         $messages = $this->noMessageGuard($this->messages());
 
         $filter = $this->getFilterFrom($address);
-        $filteredMessages = $this->filterMessages($messages, $filter);
+        $filtered = $this->filterMessages($messages, $filter);
         $ids = $this->pickAttribute($filtered, 'id');
 
         if (count($filtered) > 0) {
@@ -251,8 +251,8 @@ class MailCatcher extends Module
 
         $messages = $this->noMessageGuard($this->messages());
         $filter = $this->getFilterFrom($address);
-        $filteredMessages = $this->filterMessages($messages, $filter);
-        $this->seeInAnyMessage($filteredMessages, $expected);
+        $filtered = $this->filterMessages($messages, $filter);
+        $this->seeInAnyMessage($filtered, $expected);
     }
 
     /**
@@ -266,8 +266,8 @@ class MailCatcher extends Module
     {
         $messages = $this->noMessageGuard($this->messages());
         $filter = $this->getFilterTo($address);
-        $filteredMessages = $this->filterMessages($messages, $filter);
-        $this->seeInAnyMessage($filteredMessages, $expected);
+        $filtered = $this->filterMessages($messages, $filter);
+        $this->seeInAnyMessage($filtered, $expected);
     }
 
     /**
