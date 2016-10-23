@@ -478,7 +478,7 @@ class MailCatcher extends Module
                 $messages[] = $message;
             }
 
-            return $message;
+            return $messages;
         };
 
         return array_reduce($messages
