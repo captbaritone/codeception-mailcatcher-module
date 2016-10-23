@@ -113,10 +113,25 @@ class MailCatcher extends Module
      **/
     public function seeInLastEmailTo($address, $expected)
     {
-        $email = $this->lastMessageFrom($address);
+        $email = $this->lastMessageTo($address);
         $this->seeInEmail($email, $expected);
 
     }
+
+    /**
+     * See In Last Email From
+     *
+     * Look for a string in the most recent email sent from $address
+     *
+     * @return voide
+     * @author Carlos Gottberg <42linoge@gmail.com>
+     **/
+    public function seeInLastEmailFrom($address, $expected)
+    {
+        $email = $this->lastMessageFrom($address);
+        $this->seeInEmail($email, $expected);
+    }
+
     /**
      * Don't See In Last Email To
      *
@@ -126,7 +141,7 @@ class MailCatcher extends Module
      **/
     public function dontSeeInLastEmailTo($address, $unexpected)
     {
-        $email = $this->lastMessageFrom($address);
+        $email = $this->lastMessageTo($address);
         $this->dontSeeInEmail($email, $unexpected);
     }
 
@@ -140,7 +155,7 @@ class MailCatcher extends Module
      **/
     public function seeInLastEmailSubjectTo($address, $expected)
     {
-        $email = $this->lastMessageFrom($address);
+        $email = $this->lastMessageTo($address);
         $this->seeInEmailSubject($email, $expected);
 
     }
@@ -154,7 +169,7 @@ class MailCatcher extends Module
      **/
     public function dontSeeInLastEmailSubjectTo($address, $unexpected)
     {
-        $email = $this->lastMessageFrom($address);
+        $email = $this->lastMessageTo($address);
         $this->dontSeeInEmailSubject($email, $unexpected);
     }
 
@@ -179,14 +194,14 @@ class MailCatcher extends Module
     }
 
     /**
-     * Last Message From
+     * Last Message To
      *
      * Get the most recent email sent to $address
      *
      * @return obj
      * @author Jordan Eldredge <jordaneldredge@gmail.com>
      **/
-    public function lastMessageFrom($address)
+    public function lastMessageTo($address)
     {
       $ids = [];
       $messages = $this->messages();
@@ -206,6 +221,39 @@ class MailCatcher extends Module
         return $this->emailFromId(max($ids));
 
       $this->fail("No messages sent to {$address}");
+    }
+
+    /**
+     * Last Message From
+     * Get the most recent email sent from $address
+     *
+     * @return obj
+     * @author Carlos Gottberg <42linoge@gmail.com>
+     **/
+    public function lastMessageFrom($address)
+    {
+        $ids = [];
+        $messages = $this->messages();
+
+        if (empty($messages)) {
+            $this->fail("No messages received");
+        }
+
+        $matchSender = function ($ids, $message) use ($address) {
+            if (strpos($message['sender'], $address) !== false) {
+                return true;
+            }
+            return false;
+        };
+
+        $filteredMessages = $this->filterMessages($messages, $matchSender);
+        $ids = $this->pickAttribute($messages, 'id');
+
+        if (count($ids) > 0) {
+            return $this->emailFromId(max($ids));
+        }
+
+        $this->fail("No messages sent to {$address}");
     }
 
     /**
@@ -248,7 +296,7 @@ class MailCatcher extends Module
      **/
     public function grabMatchesFromLastEmailTo($address, $regex)
     {
-        $email = $this->lastMessageFrom($address);
+        $email = $this->lastMessageTo($address);
         $matches = $this->grabMatchesFromEmail($email, $regex);
         return $matches;
     }
@@ -388,4 +436,25 @@ class MailCatcher extends Module
         return ($sortKeyA > $sortKeyB) ? -1 : 1;
     }
 
+    protected function filterMessages($messages, $fn) {
+        $filter = function($messages, $message) use ($fn) {
+            if ($fn($message) === true) {
+                $messages[] = $message;
+            }
+
+            return $message;
+        };
+
+        return array_reduce($messages
+                            ,$filter
+                            ,[]);
+    }
+
+    protected function pickAttribute($messages, $attr) {
+        $pick = function($message) use ($attr) {
+            return $message[$attr];
+        };
+
+        return array_map($messages, $pick);
+    }
 }
