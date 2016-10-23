@@ -289,7 +289,7 @@ class MailCatcher extends Module
         $filtered = $this->arrayFilter($messages, $isPresent);
         $presentInAny = count($filtered) > 0;
 
-        $this->assertTrue($presentInAny, 'Not found in any message: ' + $expected);
+        $this->assertTrue($presentInAny, 'Not found in any message: ' . $expected);
     }
 
     /**
