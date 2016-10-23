@@ -518,6 +518,8 @@ class MailCatcher extends Module
             if (count($matches) > 0) {
                 return true;
             };
+
+            return false;
         };
     }
 
