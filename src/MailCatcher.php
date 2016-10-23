@@ -239,7 +239,7 @@ class MailCatcher extends Module
             $this->fail("No messages received");
         }
 
-        $getIds = function ($ids, $message) {
+        $getIds = function ($ids, $message) use ($address) {
             if (strpos($message['sender'], $address) !== false) {
                 $ids[] = $message['id'];
             }
