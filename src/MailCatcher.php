@@ -491,7 +491,7 @@ class MailCatcher extends Module
             return $message[$attr];
         };
 
-        return array_map($messages, $pick);
+        return array_map($pick, $messages);
     }
 
     protected function getFilterFrom($address) {
