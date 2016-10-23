@@ -183,10 +183,7 @@ class MailCatcher extends Module
      **/
     public function lastMessage()
     {
-      $messages = $this->messages();
-      if (empty($messages)) {
-        $this->fail("No messages received");
-      }
+      $messages = $this->noMessageGuard($this->messages());
 
       $last = array_shift($messages);
 
@@ -204,20 +201,13 @@ class MailCatcher extends Module
     public function lastMessageTo($address)
     {
       $ids = [];
-      $messages = $this->messages();
-      if (empty($messages)) {
-        $this->fail("No messages received");
-      }
+      $messages = $this->noMessageGuard($this->messages());
 
-      foreach ($messages as $message) {
-        foreach ($message['recipients'] as $recipient) {
-          if (strpos($recipient, $address) !== false) {
-            $ids[] = $message['id'];
-          }
-        }
-      }
+      $filter = $this->getFilterTo($address);
+      $filtered = $this->filterMessages($messages, $filter);
+      $ids = $this->pickAttribute($filtered, 'id');
 
-      if (count($ids) > 0)
+      if (count($filtered) > 0)
         return $this->emailFromId(max($ids));
 
       $this->fail("No messages sent to {$address}");
@@ -233,27 +223,73 @@ class MailCatcher extends Module
     public function lastMessageFrom($address)
     {
         $ids = [];
-        $messages = $this->messages();
+        $messages = $this->noMessageGuard($this->messages());
 
-        if (empty($messages)) {
-            $this->fail("No messages received");
-        }
+        $filter = $this->getFilterFrom($address);
+        $filteredMessages = $this->filterMessages($messages, $filter);
+        $ids = $this->pickAttribute($filtered, 'id');
 
-        $matchSender = function ($ids, $message) use ($address) {
-            if (strpos($message['sender'], $address) !== false) {
-                return true;
-            }
-            return false;
-        };
-
-        $filteredMessages = $this->filterMessages($messages, $matchSender);
-        $ids = $this->pickAttribute($messages, 'id');
-
-        if (count($ids) > 0) {
+        if (count($filtered) > 0) {
             return $this->emailFromId(max($ids));
         }
 
         $this->fail("No messages sent to {$address}");
+    }
+
+    /**
+     * See In Any Message From
+     * Look for a string in email sent from $address
+     *
+     * @return void
+     * @author Carlos Gottberg <42linoge@gmail.com>
+     **/
+    public function seeInAnyMessageFrom($address, $expected)
+    {
+        if (empty($messages)) {
+            $this->fail("No messages received");
+        }
+
+        $messages = $this->noMessageGuard($this->messages());
+        $filter = $this->getFilterFrom($address);
+        $filteredMessages = $this->filterMessages($messages, $filter);
+        $this->seeInAnyMessage($filteredMessages, $expected);
+    }
+
+    /**
+     * See In Any Message To
+     * Look for a string in email sent to $address
+     *
+     * @return void
+     * @author Carlos Gottberg <42linoge@gmail.com>
+     **/
+    public function seeInAnyMessageTo($address, $expected)
+    {
+        $messages = $this->noMessageGuard($this->messages());
+        $filter = $this->getFilterTo($address);
+        $filteredMessages = $this->filterMessages($messages, $filter);
+        $this->seeInAnyMessage($filteredMessages, $expected);
+    }
+
+    /**
+     * See In Any Message
+     * Look for a string in an array of messages
+     *
+     * @return void
+     * @author Carlos Gottberg <42linoge@gmail.com>
+     **/
+    public function seeInAnyMessage($messages, $expected)
+    {
+        $isPresent = function($message) use ($expected) {
+            if (strpos($message['source'], $expected) === false) {
+                return false;
+            }
+            return true;
+        };
+
+        $filtered = $this->arrayFilter($messages, $isPresent);
+        $presentInAny = count($filtered) > 0;
+
+        $this->assertTrue($presentInAny, 'Not found in any message: ' + $expected);
     }
 
     /**
@@ -456,5 +492,51 @@ class MailCatcher extends Module
         };
 
         return array_map($messages, $pick);
+    }
+
+    protected function getFilterFrom($address) {
+        return function ($message) use ($address) {
+            if (strpos($message['sender'], $address) === false) {
+                return false;
+            }
+            return true;
+        };
+    }
+
+    protected function getFilterTo($address) {
+        return function ($message) use ($address) {
+            $recipients = $message['recipients'];
+
+            $match = function($recipient) use ($address) {
+                if (strpos($recipient, $address) === false) {
+                    return false;
+                }
+                return true;
+            };
+            $matches = $this->arrayFilter($recipients, $match);
+
+            if (count($matches) > 0) {
+                return true;
+            };
+        };
+    }
+
+    protected function arrayFilter($arr, $fn) {
+        $filter = function($result, $element) use ($fn) {
+            if ($fn) {
+                $result[] = $element;
+            }
+            return $result;
+        };
+
+        return array_reduce($arr, $fn, []);
+    }
+
+    protected function noMessageGuard($messages) {
+        if (empty($messages)) {
+            $this->fail("No messages received");
+        }
+
+        return $messages;
     }
 }
