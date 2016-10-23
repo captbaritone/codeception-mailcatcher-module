@@ -243,7 +243,7 @@ class MailCatcher extends Module
      * @return void
      * @author Carlos Gottberg <42linoge@gmail.com>
      **/
-    public function seeInAnyMessageFrom($address, $expected)
+    public function seeInAnyEmailFrom($address, $expected)
     {
         if (empty($messages)) {
             $this->fail("No messages received");
@@ -262,12 +262,76 @@ class MailCatcher extends Module
      * @return void
      * @author Carlos Gottberg <42linoge@gmail.com>
      **/
-    public function seeInAnyMessageTo($address, $expected)
+    public function seeInAnyEmailTo($address, $expected)
     {
         $messages = $this->noMessageGuard($this->messages());
         $filter = $this->getFilterTo($address);
         $filtered = $this->filterMessages($messages, $filter);
         $this->seeInAnyMessage($filtered, $expected);
+    }
+
+    /**
+     * See In nth Email To
+     * Look for a string in nth email sent to $address
+     *
+     * @return void
+     * @author Carlos Gottberg <42linoge@gmail.com>
+     **/
+    public function seeInNthEmailTo($nth, $address, $expected)
+    {
+        $filter = $this->getFilterTo($address);
+        $this->seeInNthEmailFiltered($nth, $filter, $expected);
+    }
+
+    /**
+     * See In nth Email From
+     * Look for a string in nth email sent from $address
+     *
+     * @return void
+     * @author Carlos Gottberg <42linoge@gmail.com>
+     **/
+    public function seeInNthEmailFrom($nth, $address, $expected)
+    {
+        $filter = $this->getFilterFrom($address);
+        $this->seeInNthEmailFiltered($nth, $filter, $expected);
+    }
+
+    /**
+     * See In nth Email
+     * Look for a string in nth email
+     *
+     * @return void
+     * @author Carlos Gottberg <42linoge@gmail.com>
+     **/
+
+    public function seeInNthEmail($nth, $expected) {
+        $messages = $this->noMessageGuard($this->messages());
+
+        if (count($messages) < $nth) {
+            $this->fail("Message index out of range");
+        }
+
+        $message = $messages[$nth];
+        $this->seeInEmail($message, $expected);
+    }
+
+    /**
+     * See In nth Email Filtered
+     * Look for a string in nth email with filter
+     *
+     * @return void
+     * @author Carlos Gottberg <42linoge@gmail.com>
+     **/
+    public function seeInNthEmailFiltered($nth, $filter, $expected) {
+        $messages = $this->noMessageGuard($this->messages());
+        $filtered = $this->filterMessages($messages, $filter);
+
+        if (count($filtered) < $nth) {
+            $this->fail("Message index out of range");
+        }
+
+        $message = $filtered[$nth];
+        $this->seeInEmail($message, $expected);
     }
 
     /**
