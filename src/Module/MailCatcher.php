@@ -15,12 +15,12 @@ class MailCatcher extends Module
     /**
      * @var array
      */
-    protected $config = array('url', 'port', 'guzzleRequestOptions');
+    protected $config = ['url', 'port', 'guzzleRequestOptions'];
 
     /**
      * @var array
      */
-    protected $requiredFields = array('url', 'port');
+    protected $requiredFields = ['url', 'port'];
 
     public function _initialize()
     {
@@ -118,6 +118,7 @@ class MailCatcher extends Module
         $this->seeInEmail($email, $expected);
 
     }
+
     /**
      * Don't See In Last Email To
      *
@@ -164,14 +165,14 @@ class MailCatcher extends Module
      */
     public function lastMessage()
     {
-      $messages = $this->messages();
-      if (empty($messages)) {
-        $this->fail("No messages received");
-      }
+        $messages = $this->messages();
+        if (empty($messages)) {
+            $this->fail("No messages received");
+        }
 
-      $last = array_shift($messages);
+        $last = array_shift($messages);
 
-      return $this->emailFromId($last['id']);
+        return $this->emailFromId($last['id']);
     }
 
     /**
@@ -180,24 +181,25 @@ class MailCatcher extends Module
      */
     public function lastMessageFrom($address)
     {
-      $ids = [];
-      $messages = $this->messages();
-      if (empty($messages)) {
-        $this->fail("No messages received");
-      }
-
-      foreach ($messages as $message) {
-        foreach ($message['recipients'] as $recipient) {
-          if (strpos($recipient, $address) !== false) {
-            $ids[] = $message['id'];
-          }
+        $ids = [];
+        $messages = $this->messages();
+        if (empty($messages)) {
+            $this->fail("No messages received");
         }
-      }
 
-      if (count($ids) > 0)
-        return $this->emailFromId(max($ids));
+        foreach ($messages as $message) {
+            foreach ($message['recipients'] as $recipient) {
+                if (strpos($recipient, $address) !== false) {
+                    $ids[] = $message['id'];
+                }
+            }
+        }
 
-      $this->fail("No messages sent to {$address}");
+        if (count($ids) > 0) {
+            return $this->emailFromId(max($ids));
+        }
+
+        $this->fail("No messages sent to {$address}");
     }
 
     /**
@@ -289,7 +291,7 @@ class MailCatcher extends Module
         $messages = json_decode($response->getBody(), true);
         // Ensure messages are shown in the order they were recieved
         // https://github.com/sj26/mailcatcher/pull/184
-        usort($messages, array($this, 'messageSortCompare'));
+        usort($messages, [$this, 'messageSortCompare']);
         return $messages;
     }
 
@@ -354,7 +356,8 @@ class MailCatcher extends Module
         return $matches;
     }
 
-    static function messageSortCompare($messageA, $messageB) {
+    static function messageSortCompare($messageA, $messageB)
+    {
         $sortKeyA = $messageA['created_at'] . $messageA['id'];
         $sortKeyB = $messageB['created_at'] . $messageB['id'];
         return ($sortKeyA > $sortKeyB) ? -1 : 1;
