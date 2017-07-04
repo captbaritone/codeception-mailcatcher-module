@@ -55,6 +55,7 @@ class MailCatcher extends Module
      *
      * Look for a string in the most recent email
      *
+     * @param string $expected
      * @return void
      * @author Jordan Eldredge <jordaneldredge@gmail.com>
      **/
@@ -69,6 +70,7 @@ class MailCatcher extends Module
      *
      * Look for a string in the most recent email subject
      *
+     * @param string $expected
      * @return void
      * @author Antoine Augusti <antoine.augusti@gmail.com>
      **/
@@ -83,6 +85,7 @@ class MailCatcher extends Module
      *
      * Look for the absence of a string in the most recent email subject
      *
+     * @param string $expected
      * @return void
      **/
     public function dontSeeInLastEmailSubject($expected)
@@ -96,6 +99,7 @@ class MailCatcher extends Module
      *
      * Look for the absence of a string in the most recent email
      *
+     * @param string $unexpected
      * @return void
      **/
     public function dontSeeInLastEmail($unexpected)
@@ -109,6 +113,8 @@ class MailCatcher extends Module
      *
      * Look for a string in the most recent email sent to $address
      *
+     * @param string $address
+     * @param string $expected
      * @return void
      * @author Jordan Eldredge <jordaneldredge@gmail.com>
      **/
@@ -123,7 +129,8 @@ class MailCatcher extends Module
      * Don't See In Last Email To
      *
      * Look for the absence of a string in the most recent email sent to $address
-     *
+     * @param string $address
+     * @param string $unexpected
      * @return void
      **/
     public function dontSeeInLastEmailTo($address, $unexpected)
@@ -137,6 +144,8 @@ class MailCatcher extends Module
      *
      * Look for a string in the most recent email subject sent to $address
      *
+     * @param string $address
+     * @param string $expected
      * @return void
      * @author Antoine Augusti <antoine.augusti@gmail.com>
      **/
@@ -152,6 +161,8 @@ class MailCatcher extends Module
      *
      * Look for the absence of a string in the most recent email subject sent to $address
      *
+     * @param string $address
+     * @param string $unexpected
      * @return void
      **/
     public function dontSeeInLastEmailSubjectTo($address, $unexpected)
@@ -207,6 +218,7 @@ class MailCatcher extends Module
      *
      * Look for a regex in the email source and return it's matches
      *
+     * @param string $regex
      * @return array
      * @author Stephan Hochhaus <stephan@yauh.de>
      **/
@@ -222,6 +234,7 @@ class MailCatcher extends Module
      *
      * Look for a regex in the email source and return it
      *
+     * @param string $regex
      * @return string
      * @author Stephan Hochhaus <stephan@yauh.de>
      **/
@@ -237,6 +250,8 @@ class MailCatcher extends Module
      * Look for a regex in most recent email sent to $addres email source and
      * return it's matches
      *
+     * @param string $address
+     * @param string $regex
      * @return array
      * @author Stephan Hochhaus <stephan@yauh.de>
      **/
@@ -253,6 +268,8 @@ class MailCatcher extends Module
      * Look for a regex in most recent email sent to $addres email source and
      * return it
      *
+     * @param string $address
+     * @param string $regex
      * @return string
      * @author Stephan Hochhaus <stephan@yauh.de>
      **/
@@ -265,6 +282,7 @@ class MailCatcher extends Module
     /**
      * Test email count equals expected value
      *
+     * @param int $expected
      * @return void
      * @author Mike Crowe <drmikecrowe@gmail.com>
      **/
