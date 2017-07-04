@@ -13,7 +13,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Codeception\\Module\\": "src"
+            "Codeception\\": "src"
         }
     },
     "require-dev": {

@@ -3,6 +3,7 @@
 namespace Codeception\Module;
 
 use Codeception\Module;
+use Codeception\Util\Email;
 
 class MailCatcher extends Module
 {
@@ -159,13 +160,8 @@ class MailCatcher extends Module
     }
 
     /**
-     * Last Message
-     *
-     * Get the most recent email
-     *
-     * @return obj
-     * @author Jordan Eldredge <jordaneldredge@gmail.com>
-     **/
+     * @return Email
+     */
     public function lastMessage()
     {
       $messages = $this->messages();
@@ -179,13 +175,9 @@ class MailCatcher extends Module
     }
 
     /**
-     * Last Message From
-     *
-     * Get the most recent email sent to $address
-     *
-     * @return obj
-     * @author Jordan Eldredge <jordaneldredge@gmail.com>
-     **/
+     * @param $address
+     * @return Email
+     */
     public function lastMessageFrom($address)
     {
       $ids = [];
@@ -302,82 +294,62 @@ class MailCatcher extends Module
     }
 
     /**
-     * Email from ID
-     *
-     * Given a mailcatcher id, returns the email's object
-     *
-     * @return obj
-     * @author Jordan Eldredge <jordaneldredge@gmail.com>
-     **/
+     * @param $id
+     * @return Email
+     */
     protected function emailFromId($id)
     {
         $response = $this->mailcatcher->get("/messages/{$id}.json");
-        $message = json_decode($response->getBody(), true);
-        $message['source'] = quoted_printable_decode($message['source']);
-        return $message;
+        $messageData = json_decode($response->getBody(), true);
+        $messageData['source'] = quoted_printable_decode($messageData['source']);
+
+        return Email::createFromMailcatcherData($messageData);
     }
 
     /**
-     * See In Subject
-     *
-     * Look for a string in an email subject
-     *
-     * @return void
-     * @author Antoine Augusti <antoine.augusti@gmail.com>
-     **/
-    protected function seeInEmailSubject($email, $expected)
+     * @param Email $email
+     * @param $expected
+     */
+    protected function seeInEmailSubject(Email $email, $expected)
     {
-        $this->assertContains($expected, $email['subject'], "Email Subject Contains");
+        $this->assertContains($expected, $email->getSubject(), "Email Subject Contains");
     }
 
     /**
-     * Don't See In Subject
-     *
-     * Look for the absence of a string in an email subject
-     *
-     * @return void
-     **/
-    protected function dontSeeInEmailSubject($email, $unexpected)
+     * @param Email $email
+     * @param $unexpected
+     */
+    protected function dontSeeInEmailSubject(Email $email, $unexpected)
     {
-        $this->assertNotContains($unexpected, $email['subject'], "Email Subject Does Not Contain");
+        $this->assertNotContains($unexpected, $email->getSubject(), "Email Subject Does Not Contain");
     }
 
     /**
-     * See In Email
-     *
-     * Look for a string in an email
-     *
-     * @return void
-     * @author Jordan Eldredge <jordaneldredge@gmail.com>
-     **/
-    protected function seeInEmail($email, $expected)
+     * @param Email $email
+     * @param $expected
+     */
+    protected function seeInEmail(Email $email, $expected)
     {
-        $this->assertContains($expected, $email['source'], "Email Contains");
+        $this->assertContains($expected, $email->getSource(), "Email Contains");
     }
 
     /**
-     * Don't See In Email
-     *
-     * Look for the absence of a string in an email
-     *
-     * @return void
-     **/
-    protected function dontSeeInEmail($email, $unexpected)
+     * @param Email $email
+     * @param $unexpected
+     */
+    protected function dontSeeInEmail(Email $email, $unexpected)
     {
-        $this->assertNotContains($unexpected, $email['source'], "Email Does Not Contain");
+        $this->assertNotContains($unexpected, $email->getSource(), "Email Does Not Contain");
     }
 
     /**
-     * Grab From Email
-     *
-     * Return the matches of a regex against the raw email
-     *
-     * @return void
-     * @author Jordan Eldredge <jordaneldredge@gmail.com>
-     **/
-    protected function grabMatchesFromEmail($email, $regex)
+     * @param Email $email
+     * @param $regex
+     * @return array
+     */
+    protected function grabMatchesFromEmail(Email $email, $regex)
     {
-        preg_match($regex, $email['source'], $matches);
+        preg_match($regex, $email->getSource(), $matches);
         $this->assertNotEmpty($matches, "No matches found for $regex");
         return $matches;
     }
