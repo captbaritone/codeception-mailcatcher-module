@@ -1,5 +1,3 @@
-_Note:_ Looking for maintainer. If anyone is interested in taking over this package, let me know: jordan@jordaneldredge.
-
 # Codeception MailCatcher Module
 
 [![Build Status](https://travis-ci.org/captbaritone/codeception-mailcatcher-module.svg)](https://travis-ci.org/captbaritone/codeception-mailcatcher-module)
@@ -253,4 +251,4 @@ Example:
 
 # License
 
-Released under the same liceces as Codeception: MIT
+Released under the same license as Codeception: MIT
