@@ -4,11 +4,12 @@ namespace Codeception\Module;
 
 use Codeception\Module;
 use Codeception\Util\Email;
+use GuzzleHttp\Client;
 
 class MailCatcher extends Module
 {
     /**
-     * @var \GuzzleHttp\Client
+     * @var Client
      */
     protected $mailcatcher;
 
@@ -25,13 +26,15 @@ class MailCatcher extends Module
     public function _initialize()
     {
         $base_uri = trim($this->config['url'], '/') . ':' . $this->config['port'];
-        $this->mailcatcher = new \GuzzleHttp\Client(['base_uri' => $base_uri]);
 
+        $guzzleConfig = [
+            'base_uri' => $base_uri
+        ];
         if (isset($this->config['guzzleRequestOptions'])) {
-            foreach ($this->config['guzzleRequestOptions'] as $option => $value) {
-                $this->mailcatcher->setDefaultOption($option, $value);
-            }
+            $guzzleConfig = array_merge($guzzleConfig, $this->config['guzzleRequestOptions']);
         }
+
+        $this->mailcatcher = new Client($guzzleConfig);
     }
 
 
@@ -122,7 +125,6 @@ class MailCatcher extends Module
     {
         $email = $this->lastMessageFrom($address);
         $this->seeInEmail($email, $expected);
-
     }
 
     /**
@@ -153,7 +155,6 @@ class MailCatcher extends Module
     {
         $email = $this->lastMessageFrom($address);
         $this->seeInEmailSubject($email, $expected);
-
     }
 
     /**
@@ -206,11 +207,11 @@ class MailCatcher extends Module
             }
         }
 
-        if (count($ids) > 0) {
-            return $this->emailFromId(max($ids));
+        if (count($ids) === 0) {
+            $this->fail("No messages sent to {$address}");
         }
 
-        $this->fail("No messages sent to {$address}");
+        return $this->emailFromId(max($ids));
     }
 
     /**
@@ -309,7 +310,11 @@ class MailCatcher extends Module
         $messages = json_decode($response->getBody(), true);
         // Ensure messages are shown in the order they were recieved
         // https://github.com/sj26/mailcatcher/pull/184
-        usort($messages, [$this, 'messageSortCompare']);
+        usort($messages, function ($messageA, $messageB) {
+            $sortKeyA = $messageA['created_at'] . $messageA['id'];
+            $sortKeyB = $messageB['created_at'] . $messageB['id'];
+            return ($sortKeyA > $sortKeyB) ? -1 : 1;
+        });
         return $messages;
     }
 
@@ -373,12 +378,4 @@ class MailCatcher extends Module
         $this->assertNotEmpty($matches, "No matches found for $regex");
         return $matches;
     }
-
-    static function messageSortCompare($messageA, $messageB)
-    {
-        $sortKeyA = $messageA['created_at'] . $messageA['id'];
-        $sortKeyB = $messageB['created_at'] . $messageB['id'];
-        return ($sortKeyA > $sortKeyB) ? -1 : 1;
-    }
-
 }
