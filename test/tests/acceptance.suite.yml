@@ -1,9 +1,0 @@
-cass_name: NoGuy
-modules:
-    enabled:
-        - MailCatcher
-        - Asserts
-    config:
-        MailCatcher:
-            url: 'http://localhost'
-            port: '1080'
