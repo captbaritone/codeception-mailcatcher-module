@@ -13,10 +13,8 @@ before_install:
   # Temporary workaround for https://github.com/sj26/mailcatcher/issues/182
   - mailcatcher -f > out.txt&
   - echo "sendmail_path = /usr/bin/env catchmail -f some@from.address" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - cd test
   - composer require codeception/codeception:${CODECEPTION_VERSION}
   - composer update
-  - mkdir tests/_log
   - php vendor/bin/codecept build
 
 script: php vendor/bin/codecept run -d
