@@ -1,7 +1,4 @@
 language: php
-env:
-    - CODECEPTION_VERSION="2.2"
-    - CODECEPTION_VERSION="2.3"
 php:
   - 7.1
   - 7.0
@@ -13,8 +10,9 @@ before_install:
   # Temporary workaround for https://github.com/sj26/mailcatcher/issues/182
   - mailcatcher -f > out.txt&
   - echo "sendmail_path = /usr/bin/env catchmail -f some@from.address" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - composer require codeception/codeception:${CODECEPTION_VERSION}
   - composer update
   - php vendor/bin/codecept build
 
-script: php vendor/bin/codecept run -d
+script:
+  - php vendor/bin/codecept run acceptance -d
+  - php vendor/bin/codecept run unit --coverage-xml -d
