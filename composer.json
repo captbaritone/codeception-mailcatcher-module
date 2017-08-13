@@ -9,7 +9,8 @@
     ],
     "require": {
         "guzzlehttp/guzzle": "^6.0",
-        "codeception/codeception": "^2.2"
+        "codeception/codeception": "^2.2",
+        "php-mime-mail-parser/php-mime-mail-parser": "^2.9"
     },
     "autoload": {
         "psr-4": {
