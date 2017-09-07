@@ -129,6 +129,7 @@ class MailcatcherCest
     public function test_grab_urls_from_last_email(AcceptanceTester $I, \Codeception\Example $example)
     {
         if (!class_exists('\\PhpMimeMailParser\\Parser')) {
+            $I->amGoingTo('skip this test since mailparser not installed');
             return true;
         }
 
