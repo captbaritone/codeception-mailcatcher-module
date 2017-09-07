@@ -290,6 +290,10 @@ class MailCatcher extends Module
      */
     public function grabUrlsFromLastEmail()
     {
+        if (!class_exists('\\PhpMimeMailParser\\Parser')) {
+            throw new \Exception("'php-mime-mail-parser/php-mime-mail-parser' required for 'grabUrlsFromLastEmail' method.");
+        }
+
         $email = $this->lastMessage();
 
         $parser = new \PhpMimeMailParser\Parser();
