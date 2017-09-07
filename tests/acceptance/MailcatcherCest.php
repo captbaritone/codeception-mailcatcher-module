@@ -128,6 +128,10 @@ class MailcatcherCest
      */
     public function test_grab_urls_from_last_email(AcceptanceTester $I, \Codeception\Example $example)
     {
+        if (!class_exists('\\PhpMimeMailParser\\Parser')) {
+            return true;
+        }
+
         $user = "user@example.com";
         $I->sendEmail($user, 'Email with urls', "I'm in $example[0] .");
         $urls = $I->grabUrlsFromLastEmail();
