@@ -117,7 +117,7 @@ class MailcatcherCest
     {
         $I->sendEmailWithAttachment("user@example.com", 'Subject Line',  "Hello World!");
         $email = $I->lastMessageFrom("user@example.com");
-        $content = $I->grabAttachmentFromEail($email);
+        $content = $I->grabAttachmentFromEmail($email);
         $I->assertNotNull($content);
     }
 }
