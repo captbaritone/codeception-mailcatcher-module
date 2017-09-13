@@ -378,4 +378,18 @@ class MailCatcher extends Module
         $this->assertNotEmpty($matches, "No matches found for $regex");
         return $matches;
     }
+    
+    /**
+     * Returns the Nth attachment from an email
+     * 
+     * @param obj $email
+     * @param integer $index
+     * @return string
+     */
+    public function grabAttachmentFromEmail($email, $index = 0) {
+        $this->assertNotNull($email);
+        $this->assertArrayHasKey('attachments', $email);
+        $this->assertArrayHasKey($index, $email['attachments']);
+        return $this->mailcatcher->get($email['attachments'][$index]['href'])->getBody();
+    }
 }
