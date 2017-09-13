@@ -31,7 +31,7 @@ class Acceptance extends \Codeception\Module
         $phpmailer->Body = $body;
         
         for ($i=0; $i<$attachment_amount; $i++) {
-            $mail->addAttachment(codecept_data_dir('image.jpg'), 'attachment'.$i.'.jpg');  
+            $phpmailer->addAttachment(codecept_data_dir('image.jpg'), 'attachment'.$i.'.jpg');  
         }
         
         $phpmailer->send();
