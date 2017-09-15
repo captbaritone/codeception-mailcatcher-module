@@ -112,4 +112,12 @@ class MailcatcherCest
         $match = $I->grabFromLastEmailTo($user, "/Hello (World)/");
         $I->assertEquals($match, "Hello World");
     }
+    
+    public function test_grab_attachment_from_email(AcceptanceTester $I) 
+    {
+        $I->sendEmailWithAttachment("user@example.com", 'Subject Line',  "Hello World!");
+        $email = $I->lastMessageFrom("user@example.com");
+        $content = $I->grabAttachmentFromEmail($email);
+        $I->assertNotNull($content);
+    }
 }

@@ -249,6 +249,22 @@ Example:
 
 * Param $count
 
+### grabAttachmentFromEmail
+
+Returns the contents of the Nth attachemnt form an email.
+See the details of the email object to get the correct index for the attachments (under the attachments keys)
+
+Example:
+
+    <?php
+    $email = $I->lastMessageFrom('user@example.com');
+    $attachmentContent = $I->grabAttachmentFromEmail($email); // First attachment
+    $lastAttachmentContent = $I->grabAttachmentFromEmail($email, 3); // fourth attachment
+    ?>
+
+* Param $email Email object
+* Param $index Index of the attachment (base 0)
+
 # License
 
 Released under the same license as Codeception: MIT
