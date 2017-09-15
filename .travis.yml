@@ -1,15 +1,8 @@
 language: php
-env:
-    #- CODECEPTION_VERSION="1.6"
-    #- CODECEPTION_VERSION="1.7"
-    #- CODECEPTION_VERSION="1.8"
-    - CODECEPTION_VERSION="2.0"
-    - CODECEPTION_VERSION="dev-master"
 php:
-  - 5.5
-  - 5.4
-  #- 5.3
-  #- hhvm
+  - 7.1
+  - 7.0
+  - 5.6
 before_install:
   - gem install mime-types --version "< 3"
   - gem install --conservative mailcatcher > /dev/null 2>&1
@@ -17,10 +10,9 @@ before_install:
   # Temporary workaround for https://github.com/sj26/mailcatcher/issues/182
   - mailcatcher -f > out.txt&
   - echo "sendmail_path = /usr/bin/env catchmail -f some@from.address" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - cd test
-  - composer require codeception/codeception:${CODECEPTION_VERSION}
   - composer update
-  - mkdir tests/_log
   - php vendor/bin/codecept build
 
-script: php vendor/bin/codecept run -d
+script:
+  - php vendor/bin/codecept run acceptance -d
+  - php vendor/bin/codecept run unit --coverage-xml -d

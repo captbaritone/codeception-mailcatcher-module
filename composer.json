@@ -8,11 +8,15 @@
         }
     ],
     "require": {
-        "guzzlehttp/guzzle": "*"
+        "guzzlehttp/guzzle": "^6.0",
+        "codeception/codeception": "^2.2"
     },
     "autoload": {
         "psr-4": {
-            "Codeception\\Module\\": "src"
+            "Codeception\\": "src"
         }
+    },
+    "require-dev": {
+        "phpmailer/phpmailer": "^5.2"
     }
 }
