@@ -388,11 +388,15 @@ class MailCatcher extends Module
      */
     public function grabAttachmentFromEmail($email, $index = 0) {
         $this->assertNotNull($email);
+        // This is for version 2.1.x
         if (is_array($email)) {
             $this->assertArrayHasKey('attachments', $email);
             $this->assertArrayHasKey($index, $email['attachments']);
             return $this->mailcatcher->get($email['attachments'][$index]['href'])->getBody();
         } else {
+            $response = $this->mailcatcher->get("/messages/{$id}.json");
+            $messageData = json_decode($response->getBody(), true);
+            $this->debug($messageData);
             $attachments = $email->getAttachments();
             $this->assertGreaterThanOrEqual(count($attachments), $index);
             $this->assertArrayHasyKey($index, $attachments);
