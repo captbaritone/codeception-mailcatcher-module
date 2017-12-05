@@ -36,7 +36,7 @@ class Email
      * @param string $source
      * @param array $atachments
      */
-    public function __construct($id, array $recipients, $subject, $source, $attachments)
+    public function __construct($id, array $recipients, $subject, $source, $attachments = array())
     {
         $this->id = $id;
         $this->recipients = $recipients;
@@ -87,6 +87,10 @@ class Email
 
     public static function createFromMailcatcherData($data)
     {
-        return new self($data['id'], $data['recipients'], $data['subject'], $data['source'], $data['attachments']);
+        if (array_key_exists('attachments')) {
+            return new self($data['id'], $data['recipients'], $data['subject'], $data['source'], $data['attachments']);
+        } else {
+            return new self($data['id'], $data['recipients'], $data['subject'], $data['source']);
+        }
     }
 }
