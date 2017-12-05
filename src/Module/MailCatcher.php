@@ -393,7 +393,10 @@ class MailCatcher extends Module
             $this->assertArrayHasKey($index, $email['attachments']);
             return $this->mailcatcher->get($email['attachments'][$index]['href'])->getBody();
         } else {
-            return null;
+            $attachments = $email->getAttachments();
+            $this->assertGreatherOrEquals(count($attachments), $index);
+            $this->assertArrayHasyKey($index, $attachments);
+            return $this->mailcatcher->get($attachments[$index]['href'])->getBody();
         }
     }
 }
