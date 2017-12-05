@@ -23,19 +23,26 @@ class Email
      * @var string
      */
     private $source;
+    
+    /**
+     * @var array
+     */
+    private $attachments;
 
     /**
      * @param int $id
      * @param array $recipients
      * @param string $subject
      * @param string $source
+     * @param array $atachments
      */
-    public function __construct($id, array $recipients, $subject, $source)
+    public function __construct($id, array $recipients, $subject, $source, $attachments)
     {
         $this->id = $id;
         $this->recipients = $recipients;
         $this->subject = $subject;
         $this->source = $source;
+        $this->attachments = $attachments;
     }
 
     /**
@@ -69,9 +76,17 @@ class Email
     {
         return $this->source;
     }
+    
+    /**
+     * @return array
+     */
+    public function getAttachments()
+    {
+        return $this->attachments;
+    }
 
     public static function createFromMailcatcherData($data)
     {
-        return new self($data['id'], $data['recipients'], $data['subject'], $data['source']);
+        return new self($data['id'], $data['recipients'], $data['subject'], $data['source'], $data['attachments']);
     }
 }
