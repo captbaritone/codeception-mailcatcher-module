@@ -388,8 +388,12 @@ class MailCatcher extends Module
      */
     public function grabAttachmentFromEmail($email, $index = 0) {
         $this->assertNotNull($email);
-        $this->assertArrayHasKey('attachments', $email);
-        $this->assertArrayHasKey($index, $email['attachments']);
-        return $this->mailcatcher->get($email['attachments'][$index]['href'])->getBody();
+        if (is_array($email)) {
+            $this->assertArrayHasKey('attachments', $email);
+            $this->assertArrayHasKey($index, $email['attachments']);
+            return $this->mailcatcher->get($email['attachments'][$index]['href'])->getBody();
+        } else {
+            $this->comment("Not implemented for email element");
+        }
     }
 }
