@@ -87,7 +87,7 @@ class Email
 
     public static function createFromMailcatcherData($data)
     {
-        if (array_key_exists('attachments')) {
+        if (array_key_exists('attachments', $data)) {
             return new self($data['id'], $data['recipients'], $data['subject'], $data['source'], $data['attachments']);
         } else {
             return new self($data['id'], $data['recipients'], $data['subject'], $data['source']);
