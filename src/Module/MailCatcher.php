@@ -393,7 +393,7 @@ class MailCatcher extends Module
             $this->assertArrayHasKey($index, $email['attachments']);
             return $this->mailcatcher->get($email['attachments'][$index]['href'])->getBody();
         } else {
-            $this->comment("Not implemented for email element");
+            return null;
         }
     }
 }
