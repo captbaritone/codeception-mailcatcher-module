@@ -13,34 +13,30 @@ features.
 
 ## Installation
 
-Add the package into your composer.json:
-
+1. Add the package to your `composer.json`:
+    ```json
     {
         "require-dev": {
             "codeception/codeception": "*",
             "captbaritone/mailcatcher-codeception-module": "1.*"
         }
     }
+    ```
 
-Tell Composer to download the package:
+1. Run `composer update`
 
-    php composer.phar update
+1. Configure your project to actually send emails through `smtp://127.0.0.1:1025` in the test environment
 
-Then enable it in your `acceptance.suite.yml` configuration and set the url and
-port of your site's MailCatcher installation:
-
-    class_name: WebGuy
+1. Enable the module in your `acceptance.suite.yml`:
+    ```yaml
     modules:
         enabled:
             - MailCatcher
         config:
             MailCatcher:
-                url: 'http://project.dev'
+                url: 'http://127.0.0.1'
                 port: '1080'
-
-You will then need to rebuild your actor class:
-
-    php codecept.phar build
+    ```
 
 ## Optional Configuration
 
@@ -53,40 +49,36 @@ headers), you can set all of the allowed [Guzzle request options](https://guzzle
             - MailCatcher
         config:
             MailCatcher:
-                url: 'http://project.dev'
+                url: 'http://127.0.0.1'
                 port: '1080'
                 guzzleRequestOptions:
                     verify: false
                     debug: true
                     version: 1.0
 
-You will then need to rebuild your actor class:
-
-    php codecept.phar build
-
 ## Example Usage
+```php
+<?php
 
-    <?php
+$I->wantTo('Get a password reset email');
 
-    $I = new WebGuy($scenario);
-    $I->wantTo('Get a password reset email');
+// Clear old emails from MailCatcher
+$I->resetEmails();
 
-    // Cleared old emails from MailCatcher
-    $I->resetEmails();
+// Reset password
+$I->amOnPage('forgotPassword.php');
+$I->fillField("input[name='email']", 'user@example.com');
+$I->click('Submit');
+$I->see('Please check your inbox');
 
-    // Reset 
-    $I->amOnPage('forgotPassword.php');
-    $I->fillField("input[name='email']", 'user@example.com');
-    $I->click("Submit");
-    $I->see("Please check your email");
-
-    $I->seeInLastEmail("Please click this link to reset your password");
+$I->seeInLastEmail('Please click this link to reset your password');
+```
 
 ## Actions
 
 ### resetEmails
 
-Clears the emails in MailCatcher's list. This is prevents seeing emails sent
+Clears the emails in MailCatcher's list. This prevents seeing emails sent
 during a previous test. You probably want to do this before you trigger any
 emails to be sent
 
