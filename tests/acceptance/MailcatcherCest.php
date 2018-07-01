@@ -116,6 +116,8 @@ class MailcatcherCest
     /**
      *
      * @param AcceptanceTester $I
+     * @param \Codeception\Scenario $scenario
+     * @param \Codeception\Example $example
      * @example ["http://localhost"]
      * @example ["http://localhost/"]
      * @example ["http://localhost.com"]
@@ -126,11 +128,14 @@ class MailcatcherCest
      * @example ["http://localhost.com/index.php?auth&token=3D123"]
      * @example ["http://localhost.com/index.php?auth&id=3D12&token=3D123"]
      */
-    public function test_grab_urls_from_last_email(AcceptanceTester $I, \Codeception\Example $example)
+    public function test_grab_urls_from_last_email(
+        AcceptanceTester $I,
+        \Codeception\Scenario $scenario,
+        \Codeception\Example $example
+    )
     {
         if (!class_exists('\\PhpMimeMailParser\\Parser')) {
-            $I->amGoingTo('skip this test since mailparser not installed');
-            return true;
+            $scenario->skip('Mailparser not installed');
         }
 
         $user = "user@example.com";
