@@ -18,5 +18,8 @@
     },
     "require-dev": {
         "phpmailer/phpmailer": "^5.2"
+    },
+    "suggest": {
+        "php-mime-mail-parser/php-mime-mail-parser": "^2.9"
     }
 }
