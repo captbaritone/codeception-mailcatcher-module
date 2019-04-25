@@ -353,8 +353,9 @@ class MailCatcher extends Module
     protected function emailFromId($id)
     {
         $response = $this->mailcatcher->get("/messages/{$id}.json");
+        $plainMessage = $this->mailcatcher->get("/messages/{$id}.source");
         $messageData = json_decode($response->getBody(), true);
-        $messageData['source'] = quoted_printable_decode($messageData['source']);
+        $messageData['source'] = quoted_printable_decode($plainMessage->getBody());
 
         return Email::createFromMailcatcherData($messageData);
     }
