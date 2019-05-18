@@ -366,7 +366,7 @@ class MailCatcher extends Module
      */
     protected function seeInEmailSubject(Email $email, $expected)
     {
-        $this->assertContains($expected, $email->getSubject(), "Email Subject Contains");
+        $this->assertStringContainsString($expected, $email->getSubject(), "Email Subject Contains");
     }
 
     /**
@@ -375,7 +375,7 @@ class MailCatcher extends Module
      */
     protected function dontSeeInEmailSubject(Email $email, $unexpected)
     {
-        $this->assertNotContains($unexpected, $email->getSubject(), "Email Subject Does Not Contain");
+        $this->assertStringNotContainsString($unexpected, $email->getSubject(), "Email Subject Does Not Contain");
     }
 
     /**
@@ -384,7 +384,7 @@ class MailCatcher extends Module
      */
     protected function seeInEmail(Email $email, $expected)
     {
-        $this->assertContains($expected, $email->getSource(), "Email Contains");
+        $this->assertStringContainsString($expected, $email->getSource(), "Email Contains");
     }
 
     /**
@@ -393,7 +393,7 @@ class MailCatcher extends Module
      */
     protected function dontSeeInEmail(Email $email, $unexpected)
     {
-        $this->assertNotContains($unexpected, $email->getSource(), "Email Does Not Contain");
+        $this->assertStringNotContainsString($unexpected, $email->getSource(), "Email Does Not Contain");
     }
 
     /**
