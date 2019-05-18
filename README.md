@@ -14,20 +14,12 @@ features.
 ## Installation
 
 1. Add the package to your `composer.json`:
-    ```json
-    {
-        "require-dev": {
-            "codeception/codeception": "*",
-            "captbaritone/mailcatcher-codeception-module": "1.*"
-        }
-    }
-    ```
 
-1. Run `composer update`
+    `composer require --dev captbaritone/mailcatcher-codeception-module`
 
-1. Configure your project to actually send emails through `smtp://127.0.0.1:1025` in the test environment
+2. Configure your project to actually send emails through `smtp://127.0.0.1:1025` in the test environment
 
-1. Enable the module in your `acceptance.suite.yml`:
+3. Enable the module in your `acceptance.suite.yml`:
     ```yaml
     modules:
         enabled:
