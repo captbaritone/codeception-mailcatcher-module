@@ -366,7 +366,11 @@ class MailCatcher extends Module
      */
     protected function seeInEmailSubject(Email $email, $expected)
     {
-        $this->assertStringContainsString($expected, $email->getSubject(), "Email Subject Contains");
+        if(method_exists($this, 'assertStringContainsString')){
+            $this->assertStringContainsString($expected, $email->getSubject(), "Email Subject Contains");
+        }else{
+            $this->assertContains($expected, $email->getSubject(), "Email Subject Contains");
+        }
     }
 
     /**
@@ -375,7 +379,11 @@ class MailCatcher extends Module
      */
     protected function dontSeeInEmailSubject(Email $email, $unexpected)
     {
-        $this->assertStringNotContainsString($unexpected, $email->getSubject(), "Email Subject Does Not Contain");
+        if(method_exists($this, 'assertStringContainsString')){
+            $this->assertStringNotContainsString($unexpected, $email->getSubject(), "Email Subject Does Not Contain");
+        }else{
+            $this->assertContains($unexpected, $email->getSubject(), "Email Subject Does Not Contain");
+        }
     }
 
     /**
@@ -384,7 +392,11 @@ class MailCatcher extends Module
      */
     protected function seeInEmail(Email $email, $expected)
     {
-        $this->assertStringContainsString($expected, $email->getSource(), "Email Contains");
+        if(method_exists($this, 'assertStringContainsString')){
+            $this->assertStringContainsString($expected, $email->getSource(), "Email Contains");
+        }else{
+            $this->assertContains($expected, $email->getSource(), "Email Contains");
+        }
     }
 
     /**
@@ -393,7 +405,11 @@ class MailCatcher extends Module
      */
     protected function dontSeeInEmail(Email $email, $unexpected)
     {
-        $this->assertStringNotContainsString($unexpected, $email->getSource(), "Email Does Not Contain");
+        if(method_exists($this, 'assertStringContainsString')){
+            $this->assertStringNotContainsString($unexpected, $email->getSource(), "Email Does Not Contain");
+        }else{
+            $this->assertContains($unexpected, $email->getSource(), "Email Does Not Contain");
+        }
     }
 
     /**
