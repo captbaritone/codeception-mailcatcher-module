@@ -382,7 +382,7 @@ class MailCatcher extends Module
         if(method_exists($this, 'assertStringContainsString')){
             $this->assertStringNotContainsString($unexpected, $email->getSubject(), "Email Subject Does Not Contain");
         }else{
-            $this->assertContains($unexpected, $email->getSubject(), "Email Subject Does Not Contain");
+            $this->assertNotContains($unexpected, $email->getSubject(), "Email Subject Does Not Contain");
         }
     }
 
@@ -408,7 +408,7 @@ class MailCatcher extends Module
         if(method_exists($this, 'assertStringContainsString')){
             $this->assertStringNotContainsString($unexpected, $email->getSource(), "Email Does Not Contain");
         }else{
-            $this->assertContains($unexpected, $email->getSource(), "Email Does Not Contain");
+            $this->assertNotContains($unexpected, $email->getSource(), "Email Does Not Contain");
         }
     }
 
