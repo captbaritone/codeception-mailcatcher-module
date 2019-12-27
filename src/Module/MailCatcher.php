@@ -123,7 +123,7 @@ class MailCatcher extends Module
      **/
     public function seeInLastEmailTo($address, $expected)
     {
-        $email = $this->lastMessageFrom($address);
+        $email = $this->lastMessageTo($address);
         $this->seeInEmail($email, $expected);
     }
 
@@ -137,7 +137,7 @@ class MailCatcher extends Module
      **/
     public function dontSeeInLastEmailTo($address, $unexpected)
     {
-        $email = $this->lastMessageFrom($address);
+        $email = $this->lastMessageTo($address);
         $this->dontSeeInEmail($email, $unexpected);
     }
 
@@ -153,7 +153,7 @@ class MailCatcher extends Module
      **/
     public function seeInLastEmailSubjectTo($address, $expected)
     {
-        $email = $this->lastMessageFrom($address);
+        $email = $this->lastMessageTo($address);
         $this->seeInEmailSubject($email, $expected);
     }
 
@@ -168,7 +168,7 @@ class MailCatcher extends Module
      **/
     public function dontSeeInLastEmailSubjectTo($address, $unexpected)
     {
-        $email = $this->lastMessageFrom($address);
+        $email = $this->lastMessageTo($address);
         $this->dontSeeInEmailSubject($email, $unexpected);
     }
 
@@ -188,7 +188,34 @@ class MailCatcher extends Module
     }
 
     /**
-     * @param $address
+     * @param string $address
+     * @return Email
+     */
+    public function lastMessageTo($address)
+    {
+        $ids = [];
+        $messages = $this->messages();
+        if (empty($messages)) {
+            $this->fail("No messages received");
+        }
+
+        foreach ($messages as $message) {
+            foreach ($message['recipients'] as $recipient) {
+                if (strpos($recipient, $address) !== false) {
+                    $ids[] = $message['id'];
+                }
+            }
+        }
+
+        if (count($ids) === 0) {
+            $this->fail("No messages sent to {$address}");
+        }
+
+        return $this->emailFromId(max($ids));
+    }
+
+    /**
+     * @param string $address
      * @return Email
      */
     public function lastMessageFrom($address)
@@ -200,8 +227,14 @@ class MailCatcher extends Module
         }
 
         foreach ($messages as $message) {
+            if (strpos($message['sender'], $address)) {
+                $ids[] = $address;
+            }
+
+            // @todo deprecated, remove
             foreach ($message['recipients'] as $recipient) {
                 if (strpos($recipient, $address) !== false) {
+                    trigger_error('`lastMessageFrom` no longer accepts a recipient email.', E_USER_DEPRECATED);
                     $ids[] = $message['id'];
                 }
             }
@@ -258,7 +291,7 @@ class MailCatcher extends Module
      **/
     public function grabMatchesFromLastEmailTo($address, $regex)
     {
-        $email = $this->lastMessageFrom($address);
+        $email = $this->lastMessageTo($address);
         $matches = $this->grabMatchesFromEmail($email, $regex);
         return $matches;
     }

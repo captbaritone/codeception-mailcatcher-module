@@ -95,6 +95,22 @@ class MailCatcherTest extends \Codeception\Test\Unit
         $mailcatcher->dontSeeInLastEmailSubject('Hello world');
     }
 
+    public function testLastMessageToNoMessages()
+    {
+        $handler = new MockHandler([
+            new Response(200, [], json_encode([]))
+        ]);
+        $client = new Client(['handler' => $handler]);
+
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setClient($client);
+
+        $this->expectException(AssertionFailedError::class);
+        $this->expectExceptionMessage('No messages received');
+
+        $mailcatcher->lastMessageTo('user2@example.com');
+    }
+
     public function testLastMessageFromNoMessages()
     {
         $handler = new MockHandler([
@@ -114,7 +130,7 @@ class MailCatcherTest extends \Codeception\Test\Unit
     public function testSeeInLastEmailTo()
     {
         $mailcatcher = new MailCatcherTest_TestClass();
-        $mailcatcher->setLastMessageFrom(new Email(1, ['test@example.com'], '', 'Test body and some more text'));
+        $mailcatcher->setLastMessageTo(new Email(1, ['test@example.com'], '', 'Test body and some more text'));
 
         $mailcatcher->seeInLastEmailTo('test@example.com', 'Test body');
     }
@@ -122,7 +138,7 @@ class MailCatcherTest extends \Codeception\Test\Unit
     public function testDontSeeInLastEmailTo()
     {
         $mailcatcher = new MailCatcherTest_TestClass();
-        $mailcatcher->setLastMessageFrom(new Email(1, ['test@example.com'], '', 'Body with test data'));
+        $mailcatcher->setLastMessageTo(new Email(1, ['test@example.com'], '', 'Body with test data'));
 
         $mailcatcher->dontSeeInLastEmailTo('test@example.com', 'Test body');
     }
@@ -130,7 +146,7 @@ class MailCatcherTest extends \Codeception\Test\Unit
     public function testSeeInLastEmailSubjectTo()
     {
         $mailcatcher = new MailCatcherTest_TestClass();
-        $mailcatcher->setLastMessageFrom(new Email(1, ['test@example.com'], 'Test subject', ''));
+        $mailcatcher->setLastMessageTo(new Email(1, ['test@example.com'], 'Test subject', ''));
 
         $mailcatcher->seeInLastEmailSubjectTo('test@example.com', 'Test subject');
     }
@@ -138,7 +154,7 @@ class MailCatcherTest extends \Codeception\Test\Unit
     public function testDontSeeInLastEmailSubjectTo()
     {
         $mailcatcher = new MailCatcherTest_TestClass();
-        $mailcatcher->setLastMessageFrom(new Email(1, ['test@example.com'], 'Test subject', ''));
+        $mailcatcher->setLastMessageTo(new Email(1, ['test@example.com'], 'Test subject', ''));
 
         $mailcatcher->dontSeeInLastEmailSubjectTo('test@example.com', 'Hello world');
     }
@@ -197,6 +213,7 @@ class MailCatcherTest extends \Codeception\Test\Unit
 class MailCatcherTest_TestClass extends MailCatcher
 {
     private $lastMessage;
+    private $lastMessageTo;
     private $lastMessageFrom;
 
     public function __construct()
@@ -219,6 +236,11 @@ class MailCatcherTest_TestClass extends MailCatcher
         $this->lastMessage = $email;
     }
 
+    public function setLastMessageTo(Email $email)
+    {
+        $this->lastMessageTo = $email;
+    }
+
     public function setLastMessageFrom(Email $email)
     {
         $this->lastMessageFrom = $email;
@@ -231,6 +253,15 @@ class MailCatcherTest_TestClass extends MailCatcher
         }
 
         return parent::lastMessage();
+    }
+
+    public function lastMessageTo($address)
+    {
+        if ($this->lastMessageTo !== null) {
+            return $this->lastMessageTo;
+        }
+
+        return parent::lastMessageTo($address);
     }
 
     public function lastMessageFrom($address)
