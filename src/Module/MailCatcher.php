@@ -241,7 +241,7 @@ class MailCatcher extends Module
         }
 
         if (count($ids) === 0) {
-            $this->fail("No messages sent to {$address}");
+            $this->fail("No messages sent from {$address}");
         }
 
         return $this->emailFromId(max($ids));
