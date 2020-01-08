@@ -228,7 +228,7 @@ class MailCatcher extends Module
 
         foreach ($messages as $message) {
             if (strpos($message['sender'], $address)) {
-                $ids[] = $address;
+                $ids[] = $message['id'];
             }
 
             // @todo deprecated, remove
@@ -241,7 +241,7 @@ class MailCatcher extends Module
         }
 
         if (count($ids) === 0) {
-            $this->fail("No messages sent to {$address}");
+            $this->fail("No messages sent from {$address}");
         }
 
         return $this->emailFromId(max($ids));
