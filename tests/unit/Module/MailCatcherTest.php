@@ -111,10 +111,23 @@ class MailCatcherTest extends \Codeception\Test\Unit
         $mailcatcher->lastMessageTo('user2@example.com');
     }
 
+    /**
+     * Check that if we ask for messages from a specific email address, and we have
+     * messages but not from them - that we report back accurately.
+     *
+     * @return void
+     */
     public function testLastMessageFromNoMessages()
     {
         $handler = new MockHandler([
-            new Response(200, [], json_encode([]))
+            new Response(200, [], json_encode([
+                [
+                    'id' => 1,
+                    'created_at' => date('c'),
+                    'sender' => 'sender@example.com',
+                    'recipients' => ['user@example.com'],
+                ],
+            ]))
         ]);
         $client = new Client(['handler' => $handler]);
 
@@ -122,9 +135,50 @@ class MailCatcherTest extends \Codeception\Test\Unit
         $mailcatcher->setClient($client);
 
         $this->expectException(AssertionFailedError::class);
-        $this->expectExceptionMessage('No messages received');
+        $this->expectExceptionMessage('No messages sent from user2@example.com');
 
         $mailcatcher->lastMessageFrom('user2@example.com');
+    }
+
+    /**
+     * Check that we get the correct Last Message From even if it's neither the
+     * newest or the oldest (to ensure we're not accidentally getting the right one)
+     *
+     * @return void
+     */
+    public function lastMessageFrom()
+    {
+        $handler = new MockHandler([
+            new Response(200, [], json_encode([
+                [
+                    'id' => 1,
+                    'created_at' => date('c'),
+                    'sender' => 'sender@example.com',
+                    'recipients' => ['user@example.com'],
+                ],
+                [
+                    'id' => 2,
+                    'created_at' => date('c'),
+                    'sender' => 'sender2@example.com',
+                    'recipients' => ['user2@example.com'],
+                ],
+                [
+                    'id' => 3,
+                    'created_at' => date('c'),
+                    'sender' => 'sender3@example.com',
+                    'recipients' => ['user3@example.com'],
+                ]
+            ]))
+        ]);
+        $client = new Client(['handler' => $handler]);
+
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setClient($client);
+
+        $this->assertEquals(
+            $mailcatcher->getLastMessageFrom('sender2@example.com'),
+            2,
+        );
     }
 
     public function testSeeInLastEmailTo()
