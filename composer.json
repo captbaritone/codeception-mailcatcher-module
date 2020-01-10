@@ -10,8 +10,7 @@
     "require": {
         "php": ">=7.0",
         "guzzlehttp/guzzle": "^6.0",
-        "codeception/codeception": "^2.2 || ^3.0 || ^4.0",
-        "codeception/module-asserts": "^1.1"
+        "codeception/codeception": "^2.2 || ^3.0 || ^4.0"
     },
     "autoload": {
         "psr-4": {
@@ -19,9 +18,11 @@
         }
     },
     "require-dev": {
+        "codeception/module-asserts": "^1.1",
         "phpmailer/phpmailer": "^5.2"
     },
     "suggest": {
+        "codeception/module-asserts": "Required if using Codeception >= 4.0",
         "php-mime-mail-parser/php-mime-mail-parser": "^2.9"
     }
 }
