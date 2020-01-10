@@ -235,4 +235,4 @@ Example:
 
 # License
 
-Released under the same license as Codeception: MIT
+Released under the same license as Codeception: [MIT](https://github.com/captbaritone/codeception-mailcatcher-module/blob/master/LICENSE)
