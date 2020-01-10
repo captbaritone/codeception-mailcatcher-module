@@ -1,6 +1,7 @@
 {
     "name": "captbaritone/mailcatcher-codeception-module",
     "description": "Test emails in your Codeception acceptance tests",
+    "license": "MIT",
     "authors": [
         {
             "name": "Jordan Eldredge",
