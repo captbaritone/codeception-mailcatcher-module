@@ -36,7 +36,7 @@ class Email
      * @param string $source
      * @param array $atachments
      */
-    public function __construct($id, array $recipients, $subject, $source, $attachments = array())
+    public function __construct($id, array $recipients, $subject, $source, $attachments = [])
     {
         $this->id = $id;
         $this->recipients = $recipients;
