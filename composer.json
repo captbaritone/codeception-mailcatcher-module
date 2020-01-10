@@ -18,6 +18,7 @@
         }
     },
     "require-dev": {
+        "codeception/module-asserts": "^1.1",
         "phpmailer/phpmailer": "^5.2"
     },
     "suggest": {
