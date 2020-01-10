@@ -251,7 +251,7 @@ Example:
 
 ### grabAttachmentFromEmail
 
-Returns the contents of the Nth attachemnt form an email.
+Returns the contents of the Nth attachemnt from an email.
 See the details of the email object to get the correct index for the attachments (under the attachments keys)
 
 Example:
