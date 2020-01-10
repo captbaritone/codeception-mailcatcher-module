@@ -22,7 +22,7 @@
         "phpmailer/phpmailer": "^5.2"
     },
     "suggest": {
-        "codeception/module-asserts": "^1.1",
+        "codeception/module-asserts": "Required if using Codeception >= 4.0",
         "php-mime-mail-parser/php-mime-mail-parser": "^2.9"
     }
 }
