@@ -124,9 +124,9 @@ class MailcatcherCest
      * @example ["http://localhost.com/"]
      * @example ["http://localhost.com/index.html"]
      * @example ["http://localhost.com/index.php"]
-     * @example ["http://localhost.com/index.php?token=3D123"]
-     * @example ["http://localhost.com/index.php?auth&token=3D123"]
-     * @example ["http://localhost.com/index.php?auth&id=3D12&token=3D123"]
+     * @example ["http://localhost.com/index.php?token=123"]
+     * @example ["http://localhost.com/index.php?auth&token=123"]
+     * @example ["http://localhost.com/index.php?auth&id=12&token=123"]
      */
     public function test_grab_urls_from_last_email(
         AcceptanceTester $I,
@@ -134,15 +134,10 @@ class MailcatcherCest
         \Codeception\Example $example
     )
     {
-        if (!class_exists('\\PhpMimeMailParser\\Parser')) {
-            $scenario->skip('Mailparser not installed');
-        }
-
         $user = "user@example.com";
         $I->sendEmail($user, 'Email with urls', "I'm in $example[0] .");
         $urls = $I->grabUrlsFromLastEmail();
 
-        $test_url = str_replace('=3D', '=', $example[0]); // due to Quoted Printable Encoding
-        $I->assertEquals($test_url, $urls[0]);
+        $I->assertEquals($example[0], $urls[0]);
     }
 }

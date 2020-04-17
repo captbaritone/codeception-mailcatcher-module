@@ -5,6 +5,7 @@ namespace Codeception\Module;
 use Codeception\Module;
 use Codeception\Util\Email;
 use GuzzleHttp\Client;
+use ZBateson\MailMimeParser\Message;
 
 class MailCatcher extends Module
 {
@@ -290,22 +291,24 @@ class MailCatcher extends Module
      */
     public function grabUrlsFromLastEmail()
     {
-        if (!class_exists('\\PhpMimeMailParser\\Parser')) {
-            throw new \Exception("'php-mime-mail-parser/php-mime-mail-parser' required for 'grabUrlsFromLastEmail' method.");
-        }
-
         $email = $this->lastMessage();
 
-        $parser = new \PhpMimeMailParser\Parser();
-        $parser->setText($email->getSource());
+        $message = Message::from($email->getSource());
 
-        $text = $parser->getMessageBody('text');
+        $text = $message->getTextContent();
         preg_match_all('#\bhttp?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#', $text, $text_matches);
 
-        $html = $parser->getMessageBody('html');
+        $html = $message->getHtmlContent();
         preg_match_all('#\bhttp?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#', $html, $html_matches);
 
-        return array_merge($text_matches[0], $html_matches[0]);
+        $results = [];
+        foreach ($text_matches[0] as $rawResult) {
+            $results[] =quoted_printable_encode($rawResult);
+        }
+        foreach ($html_matches[0] as $rawResult) {
+            $results[] =quoted_printable_encode($rawResult);
+        }
+        return $results;
     }
 
     /**
