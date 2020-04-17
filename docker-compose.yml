@@ -1,8 +1,0 @@
-version: "3.7"
-services:
-  mailcatcher:
-    container_name: mailcatcher
-    image: beardyjay/mailcatcher
-    ports:
-      - "1025:1025"
-      - "1080:1080"
