@@ -303,10 +303,10 @@ class MailCatcher extends Module
 
         $results = [];
         foreach ($text_matches[0] as $rawResult) {
-            $results[] =quoted_printable_encode($rawResult);
+            $results[] = quoted_printable_encode($rawResult);
         }
         foreach ($html_matches[0] as $rawResult) {
-            $results[] =quoted_printable_encode($rawResult);
+            $results[] = quoted_printable_encode($rawResult);
         }
         return $results;
     }
