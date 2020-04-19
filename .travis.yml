@@ -12,8 +12,6 @@ before_install:
   # Temporary workaround for https://github.com/sj26/mailcatcher/issues/182
   - mailcatcher -f > out.txt&
   - echo "sendmail_path = /usr/bin/env catchmail -f some@from.address" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - pecl install mailparse
-  - composer require php-mime-mail-parser/php-mime-mail-parser
   - composer update
   - php vendor/bin/codecept build
 

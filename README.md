@@ -167,6 +167,18 @@ Example:
 
 * Param $regex
 
+### grabUrlsFromLastEmail
+
+Extracts an array of urls from the last email.
+It searches the full raw body of the email.
+The return value is an array of strings.
+
+Example:
+
+    <?php
+    $urls = $I->grabUrlsFromLastEmail();
+    ?>
+
 ### lastMessageFrom
 
 Grab the full email object sent to an address.
