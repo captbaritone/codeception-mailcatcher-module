@@ -177,7 +177,7 @@ class MailCatcherTest extends \Codeception\Test\Unit
 
         $this->assertEquals(
             $mailcatcher->getLastMessageFrom('sender2@example.com'),
-            2,
+            2
         );
     }
 
