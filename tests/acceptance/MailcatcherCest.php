@@ -160,7 +160,7 @@ class MailcatcherCest
     )
     {
         $user = "user@example.com";
-        $I->sendEmailWithEncoding($user, 'Email with urls, ' . $example[1], "I'm in $example[0] .", $example[1]);
+        $I->sendEmail($user, 'Email with urls, ' . $example[1], "I'm in $example[0] .", $example[1]);
         $urls = $I->grabUrlsFromLastEmail();
 
         $I->assertEquals($example[0], $urls[0]);
