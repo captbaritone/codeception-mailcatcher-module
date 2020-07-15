@@ -147,11 +147,11 @@ class MailcatcherCest
      * @param AcceptanceTester $I
      * @param \Codeception\Scenario $scenario
      * @param \Codeception\Example $example
-     * example ["http://example.com/list.php?page=56", "7bit"]
-     * example ["http://example.com/list.php?page=56", "quoted-printable"]
+     * @example ["http://example.com/list.php?page=56", "7bit"]
+     * @example ["http://example.com/list.php?page=56", "quoted-printable"]
      * @example ["http://example.com/list.php?page=56", "base64"]
-     * example ["http://example.com/list.php?page=56", "8bit"]
-     * example ["http://example.com/list.php?page=56", "binary"]
+     * @example ["http://example.com/list.php?page=56", "8bit"]
+     * @example ["http://example.com/list.php?page=56", "binary"]
      */
     public function test_grab_urls_from_last_email_with_encoding(
         AcceptanceTester $I,
