@@ -127,6 +127,7 @@ class MailcatcherCest
      * @example ["http://localhost.com/index.php?token=123"]
      * @example ["http://localhost.com/index.php?auth&token=123"]
      * @example ["http://localhost.com/index.php?auth&id=12&token=123"]
+     * @example ["http://example.com/list.php?page=56"]
      */
     public function test_grab_urls_from_last_email(
         AcceptanceTester $I,
@@ -136,6 +137,30 @@ class MailcatcherCest
     {
         $user = "user@example.com";
         $I->sendEmail($user, 'Email with urls', "I'm in $example[0] .");
+        $urls = $I->grabUrlsFromLastEmail();
+
+        $I->assertEquals($example[0], $urls[0]);
+    }
+
+    /**
+     *
+     * @param AcceptanceTester $I
+     * @param \Codeception\Scenario $scenario
+     * @param \Codeception\Example $example
+     * example ["http://example.com/list.php?page=56", "7bit"]
+     * example ["http://example.com/list.php?page=56", "quoted-printable"]
+     * @example ["http://example.com/list.php?page=56", "base64"]
+     * example ["http://example.com/list.php?page=56", "8bit"]
+     * example ["http://example.com/list.php?page=56", "binary"]
+     */
+    public function test_grab_urls_from_last_email_with_encoding(
+        AcceptanceTester $I,
+        \Codeception\Scenario $scenario,
+        \Codeception\Example $example
+    )
+    {
+        $user = "user@example.com";
+        $I->sendEmailWithEncoding($user, 'Email with urls, ' . $example[1], "I'm in $example[0] .", $example[1]);
         $urls = $I->grabUrlsFromLastEmail();
 
         $I->assertEquals($example[0], $urls[0]);
