@@ -159,4 +159,53 @@ class MailcatcherCest
 
         $I->assertEquals($example[0], $urls[0]);
     }
+
+    /**
+     * @param AcceptanceTester $I
+     */
+    public function test_attachment_count_in_mail(AcceptanceTester $I)
+    {
+        $user = "user@example.com";
+
+        $attachments = [
+            "image.jpg" => codecept_data_dir('image.jpg'),
+            "lorem.txt" => codecept_data_dir('lorem.txt'),
+            "compressed.zip" => codecept_data_dir('compressed.zip'),
+        ];
+
+        $I->sendEmail($user, 'Email with attachments', "I have attachments.", null, $attachments);
+        $I->seeEmailAttachmentCount(count($attachments));
+    }
+
+    /**
+     * @param AcceptanceTester $I
+     */
+    public function test_attachment_count_in_no_attachment(AcceptanceTester $I)
+    {
+        $user = "user@example.com";
+
+        $I->sendEmail($user, 'Email without attachments', "I don't have attachments.");
+        $I->seeEmailAttachmentCount(0);
+    }
+
+    /**
+     * @param AcceptanceTester $I
+     */
+    public function test_fail_attachment_count_in_mail(AcceptanceTester $I)
+    {
+        $user = "user@example.com";
+
+        $attachments = [
+            "image.jpg" => codecept_data_dir('image.jpg'),
+        ];
+
+        $I->sendEmail($user, 'Email with attachments', "I have attachments.", null, $attachments);
+
+        try{
+            $I->seeEmailAttachmentCount(3);
+            $I->fail("seeEmailAttachmentCount should fail");
+        } catch (Exception $e) {
+            // test successful
+        }
+    }
 }

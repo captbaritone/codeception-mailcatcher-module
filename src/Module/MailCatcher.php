@@ -353,6 +353,20 @@ class MailCatcher extends Module
         $this->assertEquals($expected, $count);
     }
 
+    /**
+     * Checks expected count of attachment in last email.
+     *
+     * @param int $expectedCount
+     * @return void
+     * @author Marcelo Brionee <ing@marcelobriones.com.ar>
+     **/
+    public function seeEmailAttachmentCount($expectedCount)
+    {
+        $email = $this->lastMessage();
+        $message = Message::from($email->getSource());
+        $this->assertEquals($expectedCount, $message->getAttachmentCount());
+    }
+
     // ----------- HELPER METHODS BELOW HERE -----------------------//
 
     /**

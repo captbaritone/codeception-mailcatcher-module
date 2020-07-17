@@ -81,6 +81,18 @@ Example:
     $I->resetEmails();
     ?>
 
+### seeEmailAttachmentCount
+
+Checks expected count of attachments in last email.
+
+Example:
+
+    <?php
+    $I->seeEmailAttachmentCount(1);
+    ?>
+
+* Param $expectCount
+
 ### seeInLastEmail
 
 Checks that an email contains a value. It searches the full raw text of the
