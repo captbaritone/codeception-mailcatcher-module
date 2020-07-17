@@ -210,10 +210,10 @@ class MailcatcherCest
 
         try{
             $I->seeAttachmentInLastEmail("no.jpg");
-            $I->fail("seeAttachmentInLastEmail should fail");
         } catch (Exception $e) {
-            // test successful
+            return;
         }
+        $I->fail("seeAttachmentInLastEmail should fail");
     }
 
     /**
@@ -259,9 +259,9 @@ class MailcatcherCest
 
         try{
             $I->seeEmailAttachmentCount(3);
-            $I->fail("seeEmailAttachmentCount should fail");
         } catch (Exception $e) {
-            // test successful
+            return;
         }
+        $I->fail("seeEmailAttachmentCount should fail");
     }
 }
