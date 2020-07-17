@@ -315,7 +315,7 @@ class MailCatcher extends Module
     /**
      * Grab Urls From Email
      *
-     * Return the urls the email conteins
+     * Return the urls the email contains
      *
      * @return array
      * @author Marcelo Briones <ing@marcelobriones.com.ar>
@@ -405,7 +405,7 @@ class MailCatcher extends Module
      *
      * @param int $expectedCount
      * @return void
-     * @author Marcelo Brionee <ing@marcelobriones.com.ar>
+     * @author Marcelo Briones <ing@marcelobriones.com.ar>
      **/
     public function seeEmailAttachmentCount($expectedCount)
     {
