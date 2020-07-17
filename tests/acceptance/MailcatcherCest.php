@@ -163,6 +163,43 @@ class MailcatcherCest
     /**
      * @param AcceptanceTester $I
      */
+    public function test_see_attachment_in_last(AcceptanceTester $I)
+    {
+        $user = "user@example.com";
+
+        $attachments = [
+            "image.jpg" => codecept_data_dir('image.jpg')
+        ];
+
+        $I->sendEmail($user, 'Email with attachments', "I have attachments.", null, $attachments);
+
+        $I->seeAttachmentInLastEmail("image.jpg");
+    }
+
+    /**
+     * @param AcceptanceTester $I
+     */
+    public function test_fail_see_attachment_in_last(AcceptanceTester $I)
+    {
+        $user = "user@example.com";
+
+        $attachments = [
+            "image.jpg" => codecept_data_dir('image.jpg')
+        ];
+
+        $I->sendEmail($user, 'Email with attachments', "I have attachments.", null, $attachments);
+
+        try{
+            $I->seeAttachmentInLastEmail("no.jpg");
+            $I->fail("seeAttachmentInLastEmail should fail");
+        } catch (Exception $e) {
+            // test successful
+        }
+    }
+
+    /**
+     * @param AcceptanceTester $I
+     */
     public function test_attachment_count_in_mail(AcceptanceTester $I)
     {
         $user = "user@example.com";

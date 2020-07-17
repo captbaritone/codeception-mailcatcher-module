@@ -93,6 +93,18 @@ Example:
 
 * Param $expectCount
 
+### seeAttachmentInLastEmail
+
+Checks that last email contains an attachment with filename.
+
+Example:
+
+    <?php
+    $I->seeAttachmentInLastEmail('image.jpg');
+    ?>
+
+* Param $filename
+
 ### seeInLastEmail
 
 Checks that an email contains a value. It searches the full raw text of the
