@@ -163,6 +163,18 @@ Example:
 * Param $email
 * Param $text
 
+### grabAttachmentsFromLastEmail
+
+Grab Attachments From Email
+    
+Returns array with the format [ [filename1 => bytes1], [filename2 => bytes2], ...]
+
+Example:
+
+    <?php
+    $attachments = $I->grabAttachmentsFromLastEmail();
+    ?>
+
 ### grabMatchesFromLastEmail
 
 Extracts an array of matches and sub-matches from the last email based on

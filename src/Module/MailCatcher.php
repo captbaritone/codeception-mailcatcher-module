@@ -340,6 +340,31 @@ class MailCatcher extends Module
     }
 
     /**
+     * Grab Attachments From Email
+     *
+     * Returns array with the format [ [filename1 => bytes1], [filename2 => bytes2], ...]
+     *
+     * @return array
+     * @author Marcelo Briones <ing@marcelobriones.com.ar>
+     */
+    public function grabAttachmentsFromLastEmail()
+    {
+        $email = $this->lastMessage();
+
+        $message = Message::from($email->getSource());
+
+        $attachments = [];
+
+        foreach ($message->getAllAttachmentParts() as $attachmentPart) {
+            $filename = $attachmentPart->getFilename();
+            $content = $attachmentPart->getContent();
+            $attachments[$filename] = $content;
+        }
+
+        return $attachments;
+    }
+
+    /**
      * See Attachment In Last Email
      *
      * Look for a attachement with certain filename in the most recent email

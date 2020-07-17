@@ -163,6 +163,25 @@ class MailcatcherCest
     /**
      * @param AcceptanceTester $I
      */
+    public function test_grab_attachments_from_last(AcceptanceTester $I)
+    {
+        $user = "user@example.com";
+
+        $attachments = [
+            "image.jpg" => codecept_data_dir('image.jpg'),
+            "lorem.txt" => codecept_data_dir('lorem.txt'),
+            "compressed.zip" => codecept_data_dir('compressed.zip'),
+        ];
+
+        $I->sendEmail($user, 'Email with attachments', "I have attachments.", null, $attachments);
+        $grabbedAttachments = $I->grabAttachmentsFromLastEmail();
+
+        $I->assertEquals(3, count($grabbedAttachments));
+    }
+
+    /**
+     * @param AcceptanceTester $I
+     */
     public function test_see_attachment_in_last(AcceptanceTester $I)
     {
         $user = "user@example.com";
