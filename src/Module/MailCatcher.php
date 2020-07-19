@@ -260,8 +260,7 @@ class MailCatcher extends Module
     public function grabMatchesFromLastEmail($regex)
     {
         $email = $this->lastMessage();
-        $matches = $this->grabMatchesFromEmail($email, $regex);
-        return $matches;
+        return $this->grabMatchesFromEmail($email, $regex);
     }
 
     /**
@@ -293,8 +292,7 @@ class MailCatcher extends Module
     public function grabMatchesFromLastEmailTo($address, $regex)
     {
         $email = $this->lastMessageTo($address);
-        $matches = $this->grabMatchesFromEmail($email, $regex);
-        return $matches;
+        return $this->grabMatchesFromEmail($email, $regex);
     }
 
     /**
@@ -334,10 +332,7 @@ class MailCatcher extends Module
         $html = $message->getHtmlContent();
         preg_match_all('#\bhttp?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#', $html, $html_matches);
 
-        $results = [];
-        foreach ($text_matches[0] as $rawResult) {
-            $results[] = $rawResult;
-        }
+        $results = $text_matches[0];
         foreach ($html_matches[0] as $rawResult) {
             $results[] = $rawResult;
         }
