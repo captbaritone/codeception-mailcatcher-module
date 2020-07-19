@@ -6,12 +6,15 @@ namespace Helper;
 
 class Acceptance extends \Codeception\Module
 {
-    public function sendEmail($to, $subject, $body)
+    public function sendEmail($to, $subject, $body, $encoding = null)
     {
         $phpmailer = new \PHPMailer();
         $phpmailer->isSMTP();
         $phpmailer->Host = '127.0.0.1';
         $phpmailer->Port = 1025;
+        if (null !== $encoding) {
+            $phpmailer->Encoding = $encoding;
+        }
 
         $phpmailer->addAddress($to);
         $phpmailer->Subject = $subject;

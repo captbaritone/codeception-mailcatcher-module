@@ -303,10 +303,10 @@ class MailCatcher extends Module
 
         $results = [];
         foreach ($text_matches[0] as $rawResult) {
-            $results[] = quoted_printable_encode($rawResult);
+            $results[] = $rawResult;
         }
         foreach ($html_matches[0] as $rawResult) {
-            $results[] = quoted_printable_encode($rawResult);
+            $results[] = $rawResult;
         }
         return $results;
     }
@@ -358,7 +358,7 @@ class MailCatcher extends Module
         $response = $this->mailcatcher->get("/messages/{$id}.json");
         $plainMessage = $this->mailcatcher->get("/messages/{$id}.source");
         $messageData = json_decode($response->getBody(), true);
-        $messageData['source'] = quoted_printable_decode($plainMessage->getBody());
+        $messageData['source'] = $plainMessage->getBody()->getContents();
 
         return Email::createFromMailcatcherData($messageData);
     }
