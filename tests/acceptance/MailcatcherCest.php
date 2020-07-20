@@ -208,12 +208,9 @@ class MailcatcherCest
 
         $I->sendEmail($user, 'Email with attachments', "I have attachments.", null, $attachments);
 
-        try{
+        $I->expectThrowable(new Exception("Filename not found in attachments."), function() use ($I) {
             $I->seeAttachmentInLastEmail("no.jpg");
-        } catch (Exception $e) {
-            return;
-        }
-        $I->fail("seeAttachmentInLastEmail should fail");
+        });
     }
 
     /**
@@ -257,11 +254,8 @@ class MailcatcherCest
 
         $I->sendEmail($user, 'Email with attachments', "I have attachments.", null, $attachments);
 
-        try{
+        $I->expectThrowable(new Exception("Failed asserting that 1 matches expected 3."), function() use ($I) {
             $I->seeEmailAttachmentCount(3);
-        } catch (Exception $e) {
-            return;
-        }
-        $I->fail("seeEmailAttachmentCount should fail");
+        });
     }
 }

@@ -383,7 +383,7 @@ class MailCatcher extends Module
                 return;
             }
         }
-        $this->fail("Filename not found in attachments");
+        $this->fail("Filename not found in attachments.");
     }
 
     /**
