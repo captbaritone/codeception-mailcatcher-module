@@ -15,10 +15,8 @@ class Acceptance extends \Codeception\Module
         if (null !== $encoding) {
             $phpmailer->Encoding = $encoding;
         }
-        if (count($attachments) > 0){
-            foreach ($attachments as $attachmentName => $attachment) {
-                $phpmailer->addAttachment($attachment, $attachmentName);
-            }
+        foreach ($attachments as $attachmentName => $attachment) {
+            $phpmailer->addAttachment($attachment, $attachmentName);
         }
 
         $phpmailer->addAddress($to);

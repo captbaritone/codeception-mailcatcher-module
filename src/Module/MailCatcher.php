@@ -379,7 +379,7 @@ class MailCatcher extends Module
         $message = Message::from($email->getSource());
 
         foreach ($message->getAllAttachmentParts() as $attachmentPart) {
-            if ($attachmentPart->getFilename() == $expectedFilename ) {
+            if ($attachmentPart->getFilename() === $expectedFilename) {
                 return;
             }
         }
