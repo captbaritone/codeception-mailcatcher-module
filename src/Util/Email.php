@@ -61,7 +61,7 @@ class Email
         return $this->source;
     }
 
-    public static function createFromMailcatcherData($data): \Codeception\Util\Email
+    public static function createFromMailcatcherData(array $data): \Codeception\Util\Email
     {
         return new self($data['id'], $data['recipients'], $data['subject'], $data['source']);
     }

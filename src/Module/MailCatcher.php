@@ -416,7 +416,7 @@ class MailCatcher extends Module
     }
 
     /**
-     * @param $id
+     * @param int|string $id
      */
     protected function emailFromId($id): \Codeception\Util\Email
     {
@@ -430,9 +430,9 @@ class MailCatcher extends Module
 
     /**
      * @param Email $email
-     * @param $expected
+     * @param string $expected
      */
-    protected function seeInEmailSubject(Email $email, $expected): void
+    protected function seeInEmailSubject(Email $email, string $expected): void
     {
         if(method_exists($this, 'assertStringContainsString')){
             $this->assertStringContainsString($expected, $email->getSubject(), "Email Subject Contains");
@@ -443,9 +443,9 @@ class MailCatcher extends Module
 
     /**
      * @param Email $email
-     * @param $unexpected
+     * @param string $unexpected
      */
-    protected function dontSeeInEmailSubject(Email $email, $unexpected): void
+    protected function dontSeeInEmailSubject(Email $email, string $unexpected): void
     {
         if(method_exists($this, 'assertStringContainsString')){
             $this->assertStringNotContainsString($unexpected, $email->getSubject(), "Email Subject Does Not Contain");
@@ -456,9 +456,9 @@ class MailCatcher extends Module
 
     /**
      * @param Email $email
-     * @param $expected
+     * @param string $expected
      */
-    protected function seeInEmail(Email $email, $expected): void
+    protected function seeInEmail(Email $email, string $expected): void
     {
         if(method_exists($this, 'assertStringContainsString')){
             $this->assertStringContainsString($expected, $email->getSource(), "Email Contains");
@@ -469,9 +469,9 @@ class MailCatcher extends Module
 
     /**
      * @param Email $email
-     * @param $unexpected
+     * @param string $unexpected
      */
-    protected function dontSeeInEmail(Email $email, $unexpected): void
+    protected function dontSeeInEmail(Email $email, string $unexpected): void
     {
         if(method_exists($this, 'assertStringContainsString')){
             $this->assertStringNotContainsString($unexpected, $email->getSource(), "Email Does Not Contain");
@@ -482,9 +482,9 @@ class MailCatcher extends Module
 
     /**
      * @param Email $email
-     * @param $regex
+     * @param string $regex
      */
-    protected function grabMatchesFromEmail(Email $email, $regex): array
+    protected function grabMatchesFromEmail(Email $email, string $regex): array
     {
         preg_match($regex, $email->getSource(), $matches);
         $this->assertNotEmpty($matches, "No matches found for $regex");
