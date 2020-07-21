@@ -10,6 +10,7 @@
     ],
     "require": {
         "php": ">=7.0",
+        "ext-json": "*",
         "guzzlehttp/guzzle": "^6.0 || ^7.0",
         "codeception/codeception": "^2.2 || ^3.0 || ^4.0",
         "zbateson/mail-mime-parser": "^1.2"
