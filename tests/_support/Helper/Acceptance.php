@@ -6,7 +6,7 @@ namespace Helper;
 
 class Acceptance extends \Codeception\Module
 {
-    public function sendEmail($to, $subject, $body, $isHtml = false, $encoding = null, $attachments = [])
+    public function sendEmail(string $to, string $subject, string $body, bool $isHtml = false, ?string $encoding = null, array $attachments = [])
     {
         $phpmailer = new \PHPMailer();
         $phpmailer->isSMTP();
