@@ -324,10 +324,10 @@ class MailCatcher extends Module
      *
      * Returns array with the format [ [filename1 => bytes1], [filename2 => bytes2], ...]
      *
-     * @return array
+     * @return array<string, string>
      * @author Marcelo Briones <ing@marcelobriones.com.ar>
      */
-    public function grabAttachmentsFromLastEmail()
+    public function grabAttachmentsFromLastEmail(): array
     {
         $email = $this->lastMessage();
 
@@ -353,7 +353,7 @@ class MailCatcher extends Module
      * @return void
      * @author Marcelo Briones <ing@marcelobriones.com.ar>
      **/
-    public function seeAttachmentInLastEmail($expectedFilename)
+    public function seeAttachmentInLastEmail(string $expectedFilename): void
     {
         $email = $this->lastMessage();
         $message = Message::from($email->getSource());
@@ -386,7 +386,7 @@ class MailCatcher extends Module
      * @return void
      * @author Marcelo Briones <ing@marcelobriones.com.ar>
      **/
-    public function seeEmailAttachmentCount($expectedCount)
+    public function seeEmailAttachmentCount(int $expectedCount): void
     {
         $email = $this->lastMessage();
         $message = Message::from($email->getSource());
