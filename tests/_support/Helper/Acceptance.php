@@ -6,7 +6,7 @@ namespace Helper;
 
 class Acceptance extends \Codeception\Module
 {
-    public function sendEmail($to, $subject, $body, $encoding = null)
+    public function sendEmail($to, $subject, $body, $encoding = null, $attachments = [])
     {
         $phpmailer = new \PHPMailer();
         $phpmailer->isSMTP();
@@ -14,6 +14,9 @@ class Acceptance extends \Codeception\Module
         $phpmailer->Port = 1025;
         if (null !== $encoding) {
             $phpmailer->Encoding = $encoding;
+        }
+        foreach ($attachments as $attachmentName => $attachment) {
+            $phpmailer->addAttachment($attachment, $attachmentName);
         }
 
         $phpmailer->addAddress($to);

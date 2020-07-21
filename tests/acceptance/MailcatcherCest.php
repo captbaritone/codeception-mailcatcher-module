@@ -159,4 +159,103 @@ class MailcatcherCest
 
         $I->assertEquals($example[0], $urls[0]);
     }
+
+    /**
+     * @param AcceptanceTester $I
+     */
+    public function test_grab_attachments_from_last(AcceptanceTester $I)
+    {
+        $user = "user@example.com";
+
+        $attachments = [
+            "image.jpg" => codecept_data_dir('image.jpg'),
+            "lorem.txt" => codecept_data_dir('lorem.txt'),
+            "compressed.zip" => codecept_data_dir('compressed.zip'),
+        ];
+
+        $I->sendEmail($user, 'Email with attachments', "I have attachments.", null, $attachments);
+        $grabbedAttachments = $I->grabAttachmentsFromLastEmail();
+
+        $I->assertEquals(3, count($grabbedAttachments));
+    }
+
+    /**
+     * @param AcceptanceTester $I
+     */
+    public function test_see_attachment_in_last(AcceptanceTester $I)
+    {
+        $user = "user@example.com";
+
+        $attachments = [
+            "image.jpg" => codecept_data_dir('image.jpg')
+        ];
+
+        $I->sendEmail($user, 'Email with attachments', "I have attachments.", null, $attachments);
+
+        $I->seeAttachmentInLastEmail("image.jpg");
+    }
+
+    /**
+     * @param AcceptanceTester $I
+     */
+    public function test_fail_see_attachment_in_last(AcceptanceTester $I)
+    {
+        $user = "user@example.com";
+
+        $attachments = [
+            "image.jpg" => codecept_data_dir('image.jpg')
+        ];
+
+        $I->sendEmail($user, 'Email with attachments', "I have attachments.", null, $attachments);
+
+        $I->expectThrowable(new Exception("Filename not found in attachments."), function() use ($I) {
+            $I->seeAttachmentInLastEmail("no.jpg");
+        });
+    }
+
+    /**
+     * @param AcceptanceTester $I
+     */
+    public function test_attachment_count_in_mail(AcceptanceTester $I)
+    {
+        $user = "user@example.com";
+
+        $attachments = [
+            "image.jpg" => codecept_data_dir('image.jpg'),
+            "lorem.txt" => codecept_data_dir('lorem.txt'),
+            "compressed.zip" => codecept_data_dir('compressed.zip'),
+        ];
+
+        $I->sendEmail($user, 'Email with attachments', "I have attachments.", null, $attachments);
+        $I->seeEmailAttachmentCount(count($attachments));
+    }
+
+    /**
+     * @param AcceptanceTester $I
+     */
+    public function test_attachment_count_in_no_attachment(AcceptanceTester $I)
+    {
+        $user = "user@example.com";
+
+        $I->sendEmail($user, 'Email without attachments', "I don't have attachments.");
+        $I->seeEmailAttachmentCount(0);
+    }
+
+    /**
+     * @param AcceptanceTester $I
+     */
+    public function test_fail_attachment_count_in_mail(AcceptanceTester $I)
+    {
+        $user = "user@example.com";
+
+        $attachments = [
+            "image.jpg" => codecept_data_dir('image.jpg'),
+        ];
+
+        $I->sendEmail($user, 'Email with attachments', "I have attachments.", null, $attachments);
+
+        $I->expectThrowable(new Exception("Failed asserting that 1 matches expected 3."), function() use ($I) {
+            $I->seeEmailAttachmentCount(3);
+        });
+    }
 }

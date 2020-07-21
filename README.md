@@ -81,6 +81,30 @@ Example:
     $I->resetEmails();
     ?>
 
+### seeEmailAttachmentCount
+
+Checks expected count of attachments in last email.
+
+Example:
+
+    <?php
+    $I->seeEmailAttachmentCount(1);
+    ?>
+
+* Param $expectCount
+
+### seeAttachmentInLastEmail
+
+Checks that last email contains an attachment with filename.
+
+Example:
+
+    <?php
+    $I->seeAttachmentInLastEmail('image.jpg');
+    ?>
+
+* Param $filename
+
 ### seeInLastEmail
 
 Checks that an email contains a value. It searches the full raw text of the
@@ -138,6 +162,18 @@ Example:
 
 * Param $email
 * Param $text
+
+### grabAttachmentsFromLastEmail
+
+Grab Attachments From Email
+    
+Returns array with the format [ [filename1 => bytes1], [filename2 => bytes2], ...]
+
+Example:
+
+    <?php
+    $attachments = $I->grabAttachmentsFromLastEmail();
+    ?>
 
 ### grabMatchesFromLastEmail
 
