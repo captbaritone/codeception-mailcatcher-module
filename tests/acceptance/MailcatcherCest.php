@@ -148,7 +148,7 @@ class MailcatcherCest
     {
         $user = "user@example.com";
         $url = "http://example.com/list.php?page=56";
-        $I->sendEmail($user, 'Email with urls', "<html><body><a href='$url'>My Link</a></body></html>.");
+        $I->sendEmail($user, 'Html email with urls', "<html><body><a href='$url'>My Link</a></body></html>.", true);
         $urls = $I->grabUrlsFromLastEmail();
 
         $I->assertEquals($url, $urls[0]);
