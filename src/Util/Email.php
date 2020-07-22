@@ -10,7 +10,7 @@ class Email
     private $id;
 
     /**
-     * @var array
+     * @var string[]
      */
     private $recipients;
 
@@ -25,10 +25,7 @@ class Email
     private $source;
 
     /**
-     * @param int $id
-     * @param array $recipients
-     * @param string $subject
-     * @param string $source
+     * @param string[] $recipients
      */
     public function __construct(int $id, array $recipients, string $subject, string $source)
     {
@@ -44,7 +41,7 @@ class Email
     }
 
     /**
-     * @return mixed[]
+     * @return string[]
      */
     public function getRecipients(): array
     {

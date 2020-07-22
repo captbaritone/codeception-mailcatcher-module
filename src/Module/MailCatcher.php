@@ -58,7 +58,6 @@ class MailCatcher extends Module
      *
      * Look for a string in the most recent email
      *
-     * @param string $expected
      * @author Jordan Eldredge <jordaneldredge@gmail.com>
      **/
     public function seeInLastEmail(string $expected): void
@@ -72,7 +71,6 @@ class MailCatcher extends Module
      *
      * Look for a string in the most recent email subject
      *
-     * @param string $expected
      * @author Antoine Augusti <antoine.augusti@gmail.com>
      **/
     public function seeInLastEmailSubject(string $expected): void
@@ -85,8 +83,6 @@ class MailCatcher extends Module
      * Don't See In Last Email subject
      *
      * Look for the absence of a string in the most recent email subject
-     *
-     * @param string $expected
      **/
     public function dontSeeInLastEmailSubject(string $expected): void
     {
@@ -98,8 +94,6 @@ class MailCatcher extends Module
      * Don't See In Last Email
      *
      * Look for the absence of a string in the most recent email
-     *
-     * @param string $unexpected
      **/
     public function dontSeeInLastEmail(string $unexpected): void
     {
@@ -112,8 +106,6 @@ class MailCatcher extends Module
      *
      * Look for a string in the most recent email sent to $address
      *
-     * @param string $address
-     * @param string $expected
      * @author Jordan Eldredge <jordaneldredge@gmail.com>
      **/
     public function seeInLastEmailTo(string $address, string $expected): void
@@ -126,8 +118,6 @@ class MailCatcher extends Module
      * Don't See In Last Email To
      *
      * Look for the absence of a string in the most recent email sent to $address
-     * @param string $address
-     * @param string $unexpected
      **/
     public function dontSeeInLastEmailTo(string $address, string $unexpected): void
     {
@@ -140,8 +130,6 @@ class MailCatcher extends Module
      *
      * Look for a string in the most recent email subject sent to $address
      *
-     * @param string $address
-     * @param string $expected
      * @author Antoine Augusti <antoine.augusti@gmail.com>
      **/
     public function seeInLastEmailSubjectTo(string $address, string $expected): void
@@ -154,9 +142,6 @@ class MailCatcher extends Module
      * Don't See In Last Email Subject To
      *
      * Look for the absence of a string in the most recent email subject sent to $address
-     *
-     * @param string $address
-     * @param string $unexpected
      **/
     public function dontSeeInLastEmailSubjectTo(string $address, string $unexpected): void
     {
@@ -176,9 +161,6 @@ class MailCatcher extends Module
         return $this->emailFromId($last['id']);
     }
 
-    /**
-     * @param string $address
-     */
     public function lastMessageTo(string $address): \Codeception\Util\Email
     {
         $ids = [];
@@ -202,9 +184,6 @@ class MailCatcher extends Module
         return $this->emailFromId(max($ids));
     }
 
-    /**
-     * @param string $address
-     */
     public function lastMessageFrom(string $address): \Codeception\Util\Email
     {
         $ids = [];
@@ -239,7 +218,6 @@ class MailCatcher extends Module
      *
      * Look for a regex in the email source and return it's matches
      *
-     * @param string $regex
      * @author Stephan Hochhaus <stephan@yauh.de>
      * @return mixed[]
      **/
@@ -254,7 +232,6 @@ class MailCatcher extends Module
      *
      * Look for a regex in the email source and return it
      *
-     * @param string $regex
      * @author Stephan Hochhaus <stephan@yauh.de>
      **/
     public function grabFromLastEmail(string $regex): string
@@ -269,8 +246,6 @@ class MailCatcher extends Module
      * Look for a regex in most recent email sent to $addres email source and
      * return it's matches
      *
-     * @param string $address
-     * @param string $regex
      * @author Stephan Hochhaus <stephan@yauh.de>
      * @return mixed[]
      **/
@@ -286,8 +261,6 @@ class MailCatcher extends Module
      * Look for a regex in most recent email sent to $addres email source and
      * return it
      *
-     * @param string $address
-     * @param string $regex
      * @author Stephan Hochhaus <stephan@yauh.de>
      **/
     public function grabFromLastEmailTo(string $address, string $regex): string
@@ -349,8 +322,6 @@ class MailCatcher extends Module
      *
      * Look for a attachement with certain filename in the most recent email
      *
-     * @param string $expectedFilename
-     * @return void
      * @author Marcelo Briones <ing@marcelobriones.com.ar>
      **/
     public function seeAttachmentInLastEmail(string $expectedFilename): void
@@ -369,7 +340,6 @@ class MailCatcher extends Module
     /**
      * Test email count equals expected value
      *
-     * @param int $expected
      * @author Mike Crowe <drmikecrowe@gmail.com>
      **/
     public function seeEmailCount(int $expected): void
@@ -382,8 +352,6 @@ class MailCatcher extends Module
     /**
      * Checks expected count of attachment in last email.
      *
-     * @param int $expectedCount
-     * @return void
      * @author Marcelo Briones <ing@marcelobriones.com.ar>
      **/
     public function seeEmailAttachmentCount(int $expectedCount): void
@@ -428,10 +396,6 @@ class MailCatcher extends Module
         return Email::createFromMailcatcherData($messageData);
     }
 
-    /**
-     * @param Email $email
-     * @param string $expected
-     */
     protected function seeInEmailSubject(Email $email, string $expected): void
     {
         if(method_exists($this, 'assertStringContainsString')){
@@ -441,10 +405,6 @@ class MailCatcher extends Module
         }
     }
 
-    /**
-     * @param Email $email
-     * @param string $unexpected
-     */
     protected function dontSeeInEmailSubject(Email $email, string $unexpected): void
     {
         if(method_exists($this, 'assertStringContainsString')){
@@ -454,10 +414,6 @@ class MailCatcher extends Module
         }
     }
 
-    /**
-     * @param Email $email
-     * @param string $expected
-     */
     protected function seeInEmail(Email $email, string $expected): void
     {
         if(method_exists($this, 'assertStringContainsString')){
@@ -467,10 +423,6 @@ class MailCatcher extends Module
         }
     }
 
-    /**
-     * @param Email $email
-     * @param string $unexpected
-     */
     protected function dontSeeInEmail(Email $email, string $unexpected): void
     {
         if(method_exists($this, 'assertStringContainsString')){
@@ -480,10 +432,6 @@ class MailCatcher extends Module
         }
     }
 
-    /**
-     * @param Email $email
-     * @param string $regex
-     */
     protected function grabMatchesFromEmail(Email $email, string $regex): array
     {
         preg_match($regex, $email->getSource(), $matches);
