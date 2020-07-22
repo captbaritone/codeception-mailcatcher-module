@@ -332,11 +332,7 @@ class MailCatcher extends Module
         $html = $message->getHtmlContent();
         preg_match_all('#\bhttp?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#', $html, $html_matches);
 
-        $results = $text_matches[0];
-        foreach ($html_matches[0] as $rawResult) {
-            $results[] = $rawResult;
-        }
-        return $results;
+        return array_merge($text_matches[0], $html_matches[0]);
     }
 
     /**
