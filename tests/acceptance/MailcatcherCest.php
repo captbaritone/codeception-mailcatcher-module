@@ -141,6 +141,21 @@ class MailcatcherCest
 
     /**
      * @param AcceptanceTester $I
+     */
+    public function test_grab_urls_from_html_email(
+        AcceptanceTester $I
+    )
+    {
+        $user = "user@example.com";
+        $url = "http://example.com/list.php?page=56";
+        $I->sendEmail($user, 'Html email with urls', "<html><body><a href='$url'>My Link</a></body></html>.", true);
+        $urls = $I->grabUrlsFromLastEmail();
+
+        $I->assertEquals($url, $urls[0]);
+    }
+
+    /**
+     * @param AcceptanceTester $I
      * @param \Codeception\Example $example
      * @example ["http://example.com/list.php?page=56", "7bit"]
      * @example ["http://example.com/list.php?page=56", "quoted-printable"]
@@ -173,7 +188,7 @@ class MailcatcherCest
             "compressed.zip" => codecept_data_dir('compressed.zip'),
         ];
 
-        $I->sendEmail($user, 'Email with attachments', "I have attachments.", null, $attachments);
+        $I->sendEmail($user, 'Email with attachments', "I have attachments.", false, null, $attachments);
         $grabbedAttachments = $I->grabAttachmentsFromLastEmail();
 
         $I->assertEquals(3, count($grabbedAttachments));
@@ -190,7 +205,7 @@ class MailcatcherCest
             "image.jpg" => codecept_data_dir('image.jpg')
         ];
 
-        $I->sendEmail($user, 'Email with attachments', "I have attachments.", null, $attachments);
+        $I->sendEmail($user, 'Email with attachments', "I have attachments.", false, null, $attachments);
 
         $I->seeAttachmentInLastEmail("image.jpg");
     }
@@ -206,7 +221,7 @@ class MailcatcherCest
             "image.jpg" => codecept_data_dir('image.jpg')
         ];
 
-        $I->sendEmail($user, 'Email with attachments', "I have attachments.", null, $attachments);
+        $I->sendEmail($user, 'Email with attachments', "I have attachments.", false, null, $attachments);
 
         $I->expectThrowable(new Exception("Filename not found in attachments."), function() use ($I) {
             $I->seeAttachmentInLastEmail("no.jpg");
@@ -226,7 +241,7 @@ class MailcatcherCest
             "compressed.zip" => codecept_data_dir('compressed.zip'),
         ];
 
-        $I->sendEmail($user, 'Email with attachments', "I have attachments.", null, $attachments);
+        $I->sendEmail($user, 'Email with attachments', "I have attachments.", false, null, $attachments);
         $I->seeEmailAttachmentCount(count($attachments));
     }
 
@@ -252,7 +267,7 @@ class MailcatcherCest
             "image.jpg" => codecept_data_dir('image.jpg'),
         ];
 
-        $I->sendEmail($user, 'Email with attachments', "I have attachments.", null, $attachments);
+        $I->sendEmail($user, 'Email with attachments', "I have attachments.", false, null, $attachments);
 
         $I->expectThrowable(new Exception("Failed asserting that 1 matches expected 3."), function() use ($I) {
             $I->seeEmailAttachmentCount(3);
