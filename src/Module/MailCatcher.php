@@ -24,7 +24,7 @@ class MailCatcher extends Module
      */
     protected $requiredFields = ['url', 'port'];
 
-    public function _initialize()
+    public function _initialize(): void
     {
         $base_uri = trim($this->config['url'], '/') . ':' . $this->config['port'];
 
@@ -45,10 +45,9 @@ class MailCatcher extends Module
      * Clear all emails from mailcatcher. You probably want to do this before
      * you do the thing that will send emails
      *
-     * @return void
      * @author Jordan Eldredge <jordaneldredge@gmail.com>
      **/
-    public function resetEmails()
+    public function resetEmails(): void
     {
         $this->mailcatcher->delete('/messages');
     }
@@ -59,11 +58,9 @@ class MailCatcher extends Module
      *
      * Look for a string in the most recent email
      *
-     * @param string $expected
-     * @return void
      * @author Jordan Eldredge <jordaneldredge@gmail.com>
      **/
-    public function seeInLastEmail($expected)
+    public function seeInLastEmail(string $expected): void
     {
         $email = $this->lastMessage();
         $this->seeInEmail($email, $expected);
@@ -74,11 +71,9 @@ class MailCatcher extends Module
      *
      * Look for a string in the most recent email subject
      *
-     * @param string $expected
-     * @return void
      * @author Antoine Augusti <antoine.augusti@gmail.com>
      **/
-    public function seeInLastEmailSubject($expected)
+    public function seeInLastEmailSubject(string $expected): void
     {
         $email = $this->lastMessage();
         $this->seeInEmailSubject($email, $expected);
@@ -88,11 +83,8 @@ class MailCatcher extends Module
      * Don't See In Last Email subject
      *
      * Look for the absence of a string in the most recent email subject
-     *
-     * @param string $expected
-     * @return void
      **/
-    public function dontSeeInLastEmailSubject($expected)
+    public function dontSeeInLastEmailSubject(string $expected): void
     {
         $email = $this->lastMessage();
         $this->dontSeeInEmailSubject($email, $expected);
@@ -102,11 +94,8 @@ class MailCatcher extends Module
      * Don't See In Last Email
      *
      * Look for the absence of a string in the most recent email
-     *
-     * @param string $unexpected
-     * @return void
      **/
-    public function dontSeeInLastEmail($unexpected)
+    public function dontSeeInLastEmail(string $unexpected): void
     {
         $email = $this->lastMessage();
         $this->dontSeeInEmail($email, $unexpected);
@@ -117,12 +106,9 @@ class MailCatcher extends Module
      *
      * Look for a string in the most recent email sent to $address
      *
-     * @param string $address
-     * @param string $expected
-     * @return void
      * @author Jordan Eldredge <jordaneldredge@gmail.com>
      **/
-    public function seeInLastEmailTo($address, $expected)
+    public function seeInLastEmailTo(string $address, string $expected): void
     {
         $email = $this->lastMessageTo($address);
         $this->seeInEmail($email, $expected);
@@ -132,11 +118,8 @@ class MailCatcher extends Module
      * Don't See In Last Email To
      *
      * Look for the absence of a string in the most recent email sent to $address
-     * @param string $address
-     * @param string $unexpected
-     * @return void
      **/
-    public function dontSeeInLastEmailTo($address, $unexpected)
+    public function dontSeeInLastEmailTo(string $address, string $unexpected): void
     {
         $email = $this->lastMessageTo($address);
         $this->dontSeeInEmail($email, $unexpected);
@@ -147,12 +130,9 @@ class MailCatcher extends Module
      *
      * Look for a string in the most recent email subject sent to $address
      *
-     * @param string $address
-     * @param string $expected
-     * @return void
      * @author Antoine Augusti <antoine.augusti@gmail.com>
      **/
-    public function seeInLastEmailSubjectTo($address, $expected)
+    public function seeInLastEmailSubjectTo(string $address, string $expected): void
     {
         $email = $this->lastMessageTo($address);
         $this->seeInEmailSubject($email, $expected);
@@ -162,21 +142,14 @@ class MailCatcher extends Module
      * Don't See In Last Email Subject To
      *
      * Look for the absence of a string in the most recent email subject sent to $address
-     *
-     * @param string $address
-     * @param string $unexpected
-     * @return void
      **/
-    public function dontSeeInLastEmailSubjectTo($address, $unexpected)
+    public function dontSeeInLastEmailSubjectTo(string $address, string $unexpected): void
     {
         $email = $this->lastMessageTo($address);
         $this->dontSeeInEmailSubject($email, $unexpected);
     }
 
-    /**
-     * @return Email
-     */
-    public function lastMessage()
+    public function lastMessage(): \Codeception\Util\Email
     {
         $messages = $this->messages();
         if (empty($messages)) {
@@ -188,11 +161,7 @@ class MailCatcher extends Module
         return $this->emailFromId($last['id']);
     }
 
-    /**
-     * @param string $address
-     * @return Email
-     */
-    public function lastMessageTo($address)
+    public function lastMessageTo(string $address): \Codeception\Util\Email
     {
         $ids = [];
         $messages = $this->messages();
@@ -215,11 +184,7 @@ class MailCatcher extends Module
         return $this->emailFromId(max($ids));
     }
 
-    /**
-     * @param string $address
-     * @return Email
-     */
-    public function lastMessageFrom($address)
+    public function lastMessageFrom(string $address): \Codeception\Util\Email
     {
         $ids = [];
         $messages = $this->messages();
@@ -253,11 +218,10 @@ class MailCatcher extends Module
      *
      * Look for a regex in the email source and return it's matches
      *
-     * @param string $regex
-     * @return array
      * @author Stephan Hochhaus <stephan@yauh.de>
+     * @return mixed[]
      **/
-    public function grabMatchesFromLastEmail($regex)
+    public function grabMatchesFromLastEmail(string $regex): array
     {
         $email = $this->lastMessage();
         return $this->grabMatchesFromEmail($email, $regex);
@@ -268,11 +232,9 @@ class MailCatcher extends Module
      *
      * Look for a regex in the email source and return it
      *
-     * @param string $regex
-     * @return string
      * @author Stephan Hochhaus <stephan@yauh.de>
      **/
-    public function grabFromLastEmail($regex)
+    public function grabFromLastEmail(string $regex): string
     {
         $matches = $this->grabMatchesFromLastEmail($regex);
         return $matches[0];
@@ -284,12 +246,10 @@ class MailCatcher extends Module
      * Look for a regex in most recent email sent to $addres email source and
      * return it's matches
      *
-     * @param string $address
-     * @param string $regex
-     * @return array
      * @author Stephan Hochhaus <stephan@yauh.de>
+     * @return mixed[]
      **/
-    public function grabMatchesFromLastEmailTo($address, $regex)
+    public function grabMatchesFromLastEmailTo(string $address, string $regex): array
     {
         $email = $this->lastMessageTo($address);
         return $this->grabMatchesFromEmail($email, $regex);
@@ -301,12 +261,9 @@ class MailCatcher extends Module
      * Look for a regex in most recent email sent to $addres email source and
      * return it
      *
-     * @param string $address
-     * @param string $regex
-     * @return string
      * @author Stephan Hochhaus <stephan@yauh.de>
      **/
-    public function grabFromLastEmailTo($address, $regex)
+    public function grabFromLastEmailTo(string $address, string $regex): string
     {
         $matches = $this->grabMatchesFromLastEmailTo($address, $regex);
         return $matches[0];
@@ -317,10 +274,10 @@ class MailCatcher extends Module
      *
      * Return the urls the email contains
      *
-     * @return array
      * @author Marcelo Briones <ing@marcelobriones.com.ar>
+     * @return mixed[]
      */
-    public function grabUrlsFromLastEmail()
+    public function grabUrlsFromLastEmail(): array
     {
         $email = $this->lastMessage();
 
@@ -340,10 +297,10 @@ class MailCatcher extends Module
      *
      * Returns array with the format [ [filename1 => bytes1], [filename2 => bytes2], ...]
      *
-     * @return array
+     * @return array<string, string>
      * @author Marcelo Briones <ing@marcelobriones.com.ar>
      */
-    public function grabAttachmentsFromLastEmail()
+    public function grabAttachmentsFromLastEmail(): array
     {
         $email = $this->lastMessage();
 
@@ -365,11 +322,9 @@ class MailCatcher extends Module
      *
      * Look for a attachement with certain filename in the most recent email
      *
-     * @param string $expectedFilename
-     * @return void
      * @author Marcelo Briones <ing@marcelobriones.com.ar>
      **/
-    public function seeAttachmentInLastEmail($expectedFilename)
+    public function seeAttachmentInLastEmail(string $expectedFilename): void
     {
         $email = $this->lastMessage();
         $message = Message::from($email->getSource());
@@ -385,11 +340,9 @@ class MailCatcher extends Module
     /**
      * Test email count equals expected value
      *
-     * @param int $expected
-     * @return void
      * @author Mike Crowe <drmikecrowe@gmail.com>
      **/
-    public function seeEmailCount($expected)
+    public function seeEmailCount(int $expected): void
     {
         $messages = $this->messages();
         $count = count($messages);
@@ -399,11 +352,9 @@ class MailCatcher extends Module
     /**
      * Checks expected count of attachment in last email.
      *
-     * @param int $expectedCount
-     * @return void
      * @author Marcelo Briones <ing@marcelobriones.com.ar>
      **/
-    public function seeEmailAttachmentCount($expectedCount)
+    public function seeEmailAttachmentCount(int $expectedCount): void
     {
         $email = $this->lastMessage();
         $message = Message::from($email->getSource());
@@ -411,22 +362,20 @@ class MailCatcher extends Module
     }
 
     // ----------- HELPER METHODS BELOW HERE -----------------------//
-
     /**
      * Messages
      *
      * Get an array of all the message objects
      *
-     * @return array
      * @author Jordan Eldredge <jordaneldredge@gmail.com>
      **/
-    protected function messages()
+    protected function messages(): array
     {
         $response = $this->mailcatcher->get('/messages');
         $messages = json_decode($response->getBody(), true);
         // Ensure messages are shown in the order they were recieved
         // https://github.com/sj26/mailcatcher/pull/184
-        usort($messages, function ($messageA, $messageB) {
+        usort($messages, function ($messageA, $messageB): int {
             $sortKeyA = $messageA['created_at'] . $messageA['id'];
             $sortKeyB = $messageB['created_at'] . $messageB['id'];
             return ($sortKeyA > $sortKeyB) ? -1 : 1;
@@ -435,10 +384,9 @@ class MailCatcher extends Module
     }
 
     /**
-     * @param $id
-     * @return Email
+     * @param int|string $id
      */
-    protected function emailFromId($id)
+    protected function emailFromId($id): \Codeception\Util\Email
     {
         $response = $this->mailcatcher->get("/messages/{$id}.json");
         $plainMessage = $this->mailcatcher->get("/messages/{$id}.source");
@@ -448,11 +396,7 @@ class MailCatcher extends Module
         return Email::createFromMailcatcherData($messageData);
     }
 
-    /**
-     * @param Email $email
-     * @param $expected
-     */
-    protected function seeInEmailSubject(Email $email, $expected)
+    protected function seeInEmailSubject(Email $email, string $expected): void
     {
         if(method_exists($this, 'assertStringContainsString')){
             $this->assertStringContainsString($expected, $email->getSubject(), "Email Subject Contains");
@@ -461,11 +405,7 @@ class MailCatcher extends Module
         }
     }
 
-    /**
-     * @param Email $email
-     * @param $unexpected
-     */
-    protected function dontSeeInEmailSubject(Email $email, $unexpected)
+    protected function dontSeeInEmailSubject(Email $email, string $unexpected): void
     {
         if(method_exists($this, 'assertStringContainsString')){
             $this->assertStringNotContainsString($unexpected, $email->getSubject(), "Email Subject Does Not Contain");
@@ -474,11 +414,7 @@ class MailCatcher extends Module
         }
     }
 
-    /**
-     * @param Email $email
-     * @param $expected
-     */
-    protected function seeInEmail(Email $email, $expected)
+    protected function seeInEmail(Email $email, string $expected): void
     {
         if(method_exists($this, 'assertStringContainsString')){
             $this->assertStringContainsString($expected, $email->getSource(), "Email Contains");
@@ -487,11 +423,7 @@ class MailCatcher extends Module
         }
     }
 
-    /**
-     * @param Email $email
-     * @param $unexpected
-     */
-    protected function dontSeeInEmail(Email $email, $unexpected)
+    protected function dontSeeInEmail(Email $email, string $unexpected): void
     {
         if(method_exists($this, 'assertStringContainsString')){
             $this->assertStringNotContainsString($unexpected, $email->getSource(), "Email Does Not Contain");
@@ -500,12 +432,7 @@ class MailCatcher extends Module
         }
     }
 
-    /**
-     * @param Email $email
-     * @param $regex
-     * @return array
-     */
-    protected function grabMatchesFromEmail(Email $email, $regex)
+    protected function grabMatchesFromEmail(Email $email, string $regex): array
     {
         preg_match($regex, $email->getSource(), $matches);
         $this->assertNotEmpty($matches, "No matches found for $regex");

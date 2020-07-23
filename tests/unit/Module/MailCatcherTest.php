@@ -280,7 +280,7 @@ class MailCatcherTest_TestClass extends MailCatcher
         return $this->mailcatcher;
     }
 
-    public function setClient($client)
+    public function setClient(Client $client)
     {
         $this->mailcatcher = $client;
     }
@@ -300,7 +300,7 @@ class MailCatcherTest_TestClass extends MailCatcher
         $this->lastMessageFrom = $email;
     }
 
-    public function lastMessage()
+    public function lastMessage(): \Codeception\Util\Email
     {
         if ($this->lastMessage !== null) {
             return $this->lastMessage;
@@ -309,7 +309,7 @@ class MailCatcherTest_TestClass extends MailCatcher
         return parent::lastMessage();
     }
 
-    public function lastMessageTo($address)
+    public function lastMessageTo(string $address): \Codeception\Util\Email
     {
         if ($this->lastMessageTo !== null) {
             return $this->lastMessageTo;
@@ -318,7 +318,7 @@ class MailCatcherTest_TestClass extends MailCatcher
         return parent::lastMessageTo($address);
     }
 
-    public function lastMessageFrom($address)
+    public function lastMessageFrom(string $address): \Codeception\Util\Email
     {
         if ($this->lastMessageFrom !== null) {
             return $this->lastMessageFrom;
