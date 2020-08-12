@@ -22,7 +22,7 @@
     },
     "require-dev": {
         "codeception/module-asserts": "^1.1",
-        "phpmailer/phpmailer": "^5.2"
+        "phpmailer/phpmailer": "^6.1.6"
     },
     "suggest": {
         "codeception/module-asserts": "Required if using Codeception >= 4.0"
