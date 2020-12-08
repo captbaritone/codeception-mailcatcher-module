@@ -15,4 +15,4 @@ before_install:
 
 script:
   - php vendor/bin/codecept run acceptance -d
-  - php vendor/bin/codecept run unit --coverage-xml -d
+  - XDEBUG_MODE=coverage php vendor/bin/codecept run unit --coverage-xml -d
