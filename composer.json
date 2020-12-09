@@ -6,6 +6,10 @@
         {
             "name": "Jordan Eldredge",
             "email": "jordan@jordaneldredge.com"
+        },
+        {
+            "name": "James King",
+            "email": "james@jamesking.dev"
         }
     ],
     "require": {
