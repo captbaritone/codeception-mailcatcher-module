@@ -126,6 +126,17 @@ class MailcatcherCest
      * @example ["http://localhost.com/index.php?auth&token=123"]
      * @example ["http://localhost.com/index.php?auth&id=12&token=123"]
      * @example ["http://example.com/list.php?page=56"]
+     *
+     * @example ["https://localhost"]
+     * @example ["https://localhost/"]
+     * @example ["https://localhost.com"]
+     * @example ["https://localhost.com/"]
+     * @example ["https://localhost.com/index.html"]
+     * @example ["https://localhost.com/index.php"]
+     * @example ["https://localhost.com/index.php?token=123"]
+     * @example ["https://localhost.com/index.php?auth&token=123"]
+     * @example ["https://localhost.com/index.php?auth&id=12&token=123"]
+     * @example ["https://example.com/list.php?page=56"]
      */
     public function test_grab_urls_from_last_email(
         AcceptanceTester $I,
