@@ -279,15 +279,16 @@ class MailCatcher extends Module
      */
     public function grabUrlsFromLastEmail(): array
     {
+        $regex = '#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#';
         $email = $this->lastMessage();
 
         $message = Message::from($email->getSource());
 
         $text = $message->getTextContent();
-        preg_match_all('#\bhttp?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#', $text, $text_matches);
+        preg_match_all($regex, $text, $text_matches);
 
         $html = $message->getHtmlContent();
-        preg_match_all('#\bhttp?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#', $html, $html_matches);
+        preg_match_all($regex, $html, $html_matches);
 
         return array_merge($text_matches[0], $html_matches[0]);
     }
