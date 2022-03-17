@@ -1,0 +1,48 @@
+name: Tests
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+concurrency:
+  group: ${{ github.sha }}-tests
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['7.3', '7.4', '8.0', '8.1']
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 3.1.1
+      - run: gem install mime-types --version "< 3"
+      - run: gem install --conservative mailcatcher
+      - run: mailcatcher
+      # Temporary workaround for https://github.com/sj26/mailcatcher/issues/182
+      - run: mailcatcher -f > out.txt&
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          coverage: xdebug
+          ini-values: "sendmail_path = /usr/bin/env catchmail -f some@from.address"
+          php-version: ${{ matrix.php }}
+      - uses: ramsey/composer-install@v2
+        with:
+          dependency-versions: highest
+      - run: php vendor/bin/codecept build
+      - name: Acceptance tests
+        run: php vendor/bin/codecept run acceptance -d
+      - name: Unit tests
+        env:
+          XDEBUG_MODE: coverage
+        run: php vendor/bin/codecept run unit --coverage-xml -d
