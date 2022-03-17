@@ -1,0 +1,17 @@
+# https://help.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates#about-the-dependabotyml-file
+version: 2
+updates:
+  - package-ecosystem: composer
+    directory: /
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: composer
+      include: scope
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: github-actions
+      include: scope
