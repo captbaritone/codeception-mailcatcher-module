@@ -418,18 +418,18 @@ class MailCatcher extends Module
     protected function seeInEmail(Email $email, string $expected): void
     {
         if(method_exists($this, 'assertStringContainsString')){
-            $this->assertStringContainsString($expected, $email->getSource(), "Email Contains");
+            $this->assertStringContainsString($expected, $email->getSourceQuotedPrintableDecoded(), "Email Contains");
         }else{
-            $this->assertContains($expected, $email->getSource(), "Email Contains");
+            $this->assertContains($expected, $email->getSourceQuotedPrintableDecoded(), "Email Contains");
         }
     }
 
     protected function dontSeeInEmail(Email $email, string $unexpected): void
     {
         if(method_exists($this, 'assertStringContainsString')){
-            $this->assertStringNotContainsString($unexpected, $email->getSource(), "Email Does Not Contain");
+            $this->assertStringNotContainsString($unexpected, $email->getSourceQuotedPrintableDecoded(), "Email Does Not Contain");
         }else{
-            $this->assertNotContains($unexpected, $email->getSource(), "Email Does Not Contain");
+            $this->assertNotContains($unexpected, $email->getSourceQuotedPrintableDecoded(), "Email Does Not Contain");
         }
     }
 
