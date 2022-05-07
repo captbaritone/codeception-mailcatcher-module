@@ -9,20 +9,17 @@ use ZBateson\MailMimeParser\Message;
 
 class MailCatcher extends Module
 {
-    /**
-     * @var Client
-     */
-    protected $mailcatcher;
+    protected Client $mailcatcher;
 
     /**
-     * @var array
+     * @var string[]
      */
-    protected $config = ['url', 'port', 'guzzleRequestOptions'];
+    protected array $config = ['url', 'port', 'guzzleRequestOptions'];
 
     /**
-     * @var array
+     * @var string[]
      */
-    protected $requiredFields = ['url', 'port'];
+    protected array $requiredFields = ['url', 'port'];
 
     public function _initialize(): void
     {

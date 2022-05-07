@@ -16,7 +16,7 @@
         "php": "^7.4 || ^8.0",
         "ext-json": "*",
         "guzzlehttp/guzzle": "^6.0 || ^7.0",
-        "codeception/codeception": "^3.0 || ^4.0",
+        "codeception/codeception": "v4.0 || ^5.0",
         "zbateson/mail-mime-parser": "^1.2"
     },
     "autoload": {
@@ -25,7 +25,7 @@
         }
     },
     "require-dev": {
-        "codeception/module-asserts": "^1.1",
+        "codeception/module-asserts": "v2.0 || v3.0",
         "phpmailer/phpmailer": "^6.1.6"
     },
     "suggest": {
