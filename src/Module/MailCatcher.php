@@ -435,7 +435,7 @@ class MailCatcher extends Module
 
     protected function grabMatchesFromEmail(Email $email, string $regex): array
     {
-        preg_match($regex, $email->getSource(), $matches);
+        preg_match($regex, $email->getSourceQuotedPrintableDecoded(), $matches);
         $this->assertNotEmpty($matches, "No matches found for $regex");
         return $matches;
     }
