@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        dependency-versions: ['highest', 'lowest']
         php: ['7.4', '8.0', '8.1']
 
     steps:
@@ -38,7 +39,7 @@ jobs:
           php-version: ${{ matrix.php }}
       - uses: ramsey/composer-install@v2
         with:
-          dependency-versions: highest
+          dependency-versions: ${{ matrix.dependency-versions }}
       - run: php vendor/bin/codecept build
       - name: Acceptance tests
         run: php vendor/bin/codecept run acceptance -d
