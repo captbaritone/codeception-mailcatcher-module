@@ -15,8 +15,10 @@
     "require": {
         "php": "^7.4 || ^8.0",
         "ext-json": "*",
-        "guzzlehttp/guzzle": "^6.0 || ^7.0",
         "codeception/codeception": "^3.0 || ^4.0",
+        "guzzlehttp/guzzle": "^6.0 || ^7.0",
+        "symfony/console": ">=4.4.9",
+        "symfony/yaml": ">=4.4.9",
         "zbateson/mail-mime-parser": "^1.2"
     },
     "autoload": {
@@ -30,5 +32,8 @@
     },
     "suggest": {
         "codeception/module-asserts": "Required if using Codeception >= 4.0"
+    },
+    "config": {
+        "sort-packages": true
     }
 }
