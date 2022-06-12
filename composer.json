@@ -19,7 +19,7 @@
         "guzzlehttp/guzzle": "^7.2",
         "symfony/console": ">=4.4.9",
         "symfony/yaml": ">=4.4.9",
-        "zbateson/mail-mime-parser": "^1.2"
+        "zbateson/mail-mime-parser": "^2.0"
     },
     "autoload": {
         "psr-4": {
