@@ -193,7 +193,7 @@ class MailCatcher extends Module
         }
 
         foreach ($messages as $message) {
-            if (strpos($message['sender'], $address)) {
+            if (strpos($message['sender'], $address) !== false) {
                 $ids[] = $message['id'];
             }
 
