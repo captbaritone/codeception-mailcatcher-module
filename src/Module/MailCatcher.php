@@ -14,15 +14,9 @@ class MailCatcher extends Module
      */
     protected $mailcatcher;
 
-    /**
-     * @var array
-     */
-    protected $config = ['url', 'port', 'guzzleRequestOptions'];
+    protected array $config = ['url', 'port', 'guzzleRequestOptions'];
 
-    /**
-     * @var array
-     */
-    protected $requiredFields = ['url', 'port'];
+    protected array $requiredFields = ['url', 'port'];
 
     public function _initialize(): void
     {
