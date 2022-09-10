@@ -15,7 +15,8 @@ class Acceptance extends \Codeception\Module
         string $body,
         bool $isHtml = false,
         ?string $encoding = null,
-        array $attachments = []
+        array $attachments = [],
+        string $from = "sender@example.com"
     ): void {
         $phpmailer = new PHPMailer();
         $phpmailer->isSMTP();
@@ -29,7 +30,7 @@ class Acceptance extends \Codeception\Module
         }
 
         $phpmailer->addAddress($to);
-        $phpmailer->setFrom("sender@example.com");
+        $phpmailer->setFrom($from);
         $phpmailer->Subject = $subject;
         $phpmailer->Body = $body;
         $phpmailer->isHTML($isHtml);
