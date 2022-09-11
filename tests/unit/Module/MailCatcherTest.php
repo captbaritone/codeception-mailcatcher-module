@@ -66,7 +66,7 @@ class MailCatcherTest extends \Codeception\Test\Unit
     public function testSeeInLastEmail()
     {
         $mailcatcher = new MailCatcherTest_TestClass();
-        $mailcatcher->setLastMessage(new Email(1, [], '', 'Test body and some more text'));
+        $mailcatcher->setLastMessage(new Email(1, '', [], '', 'Test body and some more text'));
 
         $mailcatcher->seeInLastEmail('Test body');
     }
@@ -74,7 +74,7 @@ class MailCatcherTest extends \Codeception\Test\Unit
     public function testDontSeeInLastEmail()
     {
         $mailcatcher = new MailCatcherTest_TestClass();
-        $mailcatcher->setLastMessage(new Email(1, [], '', 'Body with test data'));
+        $mailcatcher->setLastMessage(new Email(1, '', [], '', 'Body with test data'));
 
         $mailcatcher->dontSeeInLastEmail('Test body');
     }
@@ -82,7 +82,7 @@ class MailCatcherTest extends \Codeception\Test\Unit
     public function testSeeInLastEmailSubject()
     {
         $mailcatcher = new MailCatcherTest_TestClass();
-        $mailcatcher->setLastMessage(new Email(1, [], 'Test subject', ''));
+        $mailcatcher->setLastMessage(new Email(1, '', [], 'Test subject', ''));
 
         $mailcatcher->seeInLastEmailSubject('Test subject');
     }
@@ -90,7 +90,7 @@ class MailCatcherTest extends \Codeception\Test\Unit
     public function testDontSeeInLastEmailSubject()
     {
         $mailcatcher = new MailCatcherTest_TestClass();
-        $mailcatcher->setLastMessage(new Email(1, [], 'Test subject', ''));
+        $mailcatcher->setLastMessage(new Email(1, '', [], 'Test subject', ''));
 
         $mailcatcher->dontSeeInLastEmailSubject('Hello world');
     }
@@ -126,6 +126,7 @@ class MailCatcherTest extends \Codeception\Test\Unit
                     'created_at' => date('c'),
                     'sender' => 'sender@example.com',
                     'recipients' => ['user@example.com'],
+                    'subject' => '',
                 ],
             ]))
         ]);
@@ -146,8 +147,18 @@ class MailCatcherTest extends \Codeception\Test\Unit
      *
      * @return void
      */
-    public function lastMessageFrom()
+    public function testLastMessageFrom()
     {
+        $recipients = ['user2@example.com'];
+        $interestingMessage = [
+            'id' => 2,
+            'created_at' => date('c'),
+            'sender' => 'sender2@example.com',
+            'recipients' => $recipients,
+            'subject' => '',
+        ];
+        // Queue all responses here,
+        // see https://guzzler.dev/troubleshooting/#mock-queue-is-empty
         $handler = new MockHandler([
             new Response(200, [], json_encode([
                 [
@@ -155,20 +166,23 @@ class MailCatcherTest extends \Codeception\Test\Unit
                     'created_at' => date('c'),
                     'sender' => 'sender@example.com',
                     'recipients' => ['user@example.com'],
+                    'subject' => '',
                 ],
-                [
-                    'id' => 2,
-                    'created_at' => date('c'),
-                    'sender' => 'sender2@example.com',
-                    'recipients' => ['user2@example.com'],
-                ],
+                $interestingMessage,
                 [
                     'id' => 3,
                     'created_at' => date('c'),
                     'sender' => 'sender3@example.com',
                     'recipients' => ['user3@example.com'],
+                    'subject' => '',
                 ]
-            ]))
+            ])),
+            // \Codeception\Module\MailCatcher::emailFromId
+            // $this->mailcatcher->get("/messages/{$id}.json");
+            new Response(200, [], json_encode($interestingMessage)),
+            // \Codeception\Module\MailCatcher::emailFromId
+            // $plainMessage = $this->mailcatcher->get("/messages/{$id}.source");
+            new Response(200, [], json_encode($interestingMessage)),
         ]);
         $client = new Client(['handler' => $handler]);
 
@@ -176,15 +190,108 @@ class MailCatcherTest extends \Codeception\Test\Unit
         $mailcatcher->setClient($client);
 
         $this->assertEquals(
-            $mailcatcher->getLastMessageFrom('sender2@example.com'),
-            2
+            $recipients,
+            $mailcatcher->lastMessageFrom('sender2@example.com')->getRecipients(),
         );
+    }
+
+    /**
+     * Check that we get the correct nth Message from sender
+     *
+     * @return void
+     */
+    public function testNthMessageFrom()
+    {
+        $recipients = ['user2@example.com', 'user4@example.com'];
+        $interestingMessage = [
+            'id' => 2,
+            'created_at' => date('c'),
+            'sender' => 'sender@example.com',
+            'recipients' => $recipients,
+            'subject' => '',
+        ];
+        // Queue all responses here,
+        // see https://guzzler.dev/troubleshooting/#mock-queue-is-empty
+        $handler = new MockHandler([
+            new Response(200, [], json_encode([
+                [
+                    'id' => 1,
+                    'created_at' => date('c'),
+                    'sender' => 'sender@example.com',
+                    'recipients' => ['user@example.com'],
+                    'subject' => '',
+                ],
+                $interestingMessage,
+                [
+                    'id' => 3,
+                    'created_at' => date('c'),
+                    'sender' => 'sender3@example.com',
+                    'recipients' => ['user3@example.com'],
+                    'subject' => '',
+                ]
+            ])),
+            // \Codeception\Module\MailCatcher::emailFromId
+            // $this->mailcatcher->get("/messages/{$id}.json");
+            new Response(200, [], json_encode($interestingMessage)),
+            // \Codeception\Module\MailCatcher::emailFromId
+            // $plainMessage = $this->mailcatcher->get("/messages/{$id}.source");
+            new Response(200, [], json_encode($interestingMessage)),
+        ]);
+        $client = new Client(['handler' => $handler]);
+
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setClient($client);
+
+        $this->assertEquals(
+            $recipients,
+            $mailcatcher->nthMessageFrom(2, 'sender@example.com')->getRecipients(),
+        );
+    }
+
+    public function testSeeInLastEmailSender()
+    {
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setLastMessage(new Email(1, 'sender@example.com', ['test@example.com'], '', 'Test body and some more text'));
+
+        $mailcatcher->seeInLastEmailSender('sender@example.com');
+    }
+    
+    public function testSeeInNthEmailSender()
+    {
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setMessages([
+            new Email(1, 'senderA@example.com', [], '', 'Test body and some more text'),
+            new Email(2, 'senderB@example.com', [], '', 'Morbi eget venenatis massa'),
+            new Email(3, 'senderC@example.com', [], '', 'Nunc dignissim sapien pulvinar mauris ultrices'),
+        ]);
+
+        $mailcatcher->seeInNthEmailSender(2, 'senderB@example.com');
+    }
+    
+    public function testSeeInLastEmailRecipient()
+    {
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setLastMessage(new Email(1, '', ['user@example.com'], '', 'Test body and some more text'));
+
+        $mailcatcher->seeInLastEmailRecipient('user@example.com');
+    }
+
+    public function testSeeInNthEmailRecipient()
+    {
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setMessages([
+            new Email(1, 'senderA@example.com', ['user@example.com', 'userB@example.com'], '', 'Test body and some more text'),
+            new Email(2, 'senderB@example.com', ['userB@example.com'], '', 'Morbi eget venenatis massa'),
+            new Email(3, 'senderC@example.com', ['userC@example.com'], '', 'Nunc dignissim sapien pulvinar mauris ultrices'),
+        ]);
+
+        $mailcatcher->seeInNthEmailRecipient(2, 'userB@example.com');
     }
 
     public function testSeeInLastEmailTo()
     {
         $mailcatcher = new MailCatcherTest_TestClass();
-        $mailcatcher->setLastMessageTo(new Email(1, ['test@example.com'], '', 'Test body and some more text'));
+        $mailcatcher->setLastMessageTo(new Email(1, '', ['test@example.com'], '', 'Test body and some more text'));
 
         $mailcatcher->seeInLastEmailTo('test@example.com', 'Test body');
     }
@@ -192,7 +299,7 @@ class MailCatcherTest extends \Codeception\Test\Unit
     public function testDontSeeInLastEmailTo()
     {
         $mailcatcher = new MailCatcherTest_TestClass();
-        $mailcatcher->setLastMessageTo(new Email(1, ['test@example.com'], '', 'Body with test data'));
+        $mailcatcher->setLastMessageTo(new Email(1, '', ['test@example.com'], '', 'Body with test data'));
 
         $mailcatcher->dontSeeInLastEmailTo('test@example.com', 'Test body');
     }
@@ -200,7 +307,7 @@ class MailCatcherTest extends \Codeception\Test\Unit
     public function testSeeInLastEmailSubjectTo()
     {
         $mailcatcher = new MailCatcherTest_TestClass();
-        $mailcatcher->setLastMessageTo(new Email(1, ['test@example.com'], 'Test subject', ''));
+        $mailcatcher->setLastMessageTo(new Email(1, '', ['test@example.com'], 'Test subject', ''));
 
         $mailcatcher->seeInLastEmailSubjectTo('test@example.com', 'Test subject');
     }
@@ -208,9 +315,77 @@ class MailCatcherTest extends \Codeception\Test\Unit
     public function testDontSeeInLastEmailSubjectTo()
     {
         $mailcatcher = new MailCatcherTest_TestClass();
-        $mailcatcher->setLastMessageTo(new Email(1, ['test@example.com'], 'Test subject', ''));
+        $mailcatcher->setLastMessageTo(new Email(1, '', ['test@example.com'], 'Test subject', ''));
 
         $mailcatcher->dontSeeInLastEmailSubjectTo('test@example.com', 'Hello world');
+    }
+    
+    public function testNthMessageNoMessages()
+    {
+        $handler = new MockHandler([
+            new Response(200, [], json_encode([]))
+        ]);
+        $client = new Client(['handler' => $handler]);
+
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setClient($client);
+
+        $this->expectException(AssertionFailedError::class);
+        $this->expectExceptionMessage('No messages received');
+
+        $mailcatcher->nthMessage(1);
+    }
+    
+    public function testSeeInNthEmail()
+    {
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setMessages([
+            new Email(1, '', [], '', 'Test body and some more text'),
+            new Email(2, '', [], '', 'Morbi eget venenatis massa'),
+            new Email(3, '', [], '', 'Nunc dignissim sapien pulvinar mauris ultrices'),
+        ]);
+
+        $mailcatcher->seeInNthEmail(1, 'Test body');
+        $mailcatcher->seeInNthEmail(2, 'Morbi eget venenatis massa');
+        $mailcatcher->seeInNthEmail(3, 'Nunc dignissim');
+    }
+
+    public function testDontSeeInNthEmail()
+    {
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setMessages([
+            new Email(1, '', [], '', 'Test body and some more text'),
+            new Email(2, '', [], '', 'Morbi eget venenatis massa'),
+            new Email(2, '', [], '', 'Nunc dignissim sapien pulvinar mauris ultrices'),
+        ]);
+
+        $mailcatcher->dontSeeInNthEmail(3, 'Test body');
+    }
+
+    public function testSeeInNthEmailSubject()
+    {
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setMessages([
+            new Email(1, '', [], 'Test subject', ''),
+            new Email(2, '', [], 'Aliquam eget', ''),
+            new Email(2, '', [], 'Vivamus maximus', ''),
+        ]);
+
+        $mailcatcher->seeInNthEmailSubject(1, 'Test subject');
+        $mailcatcher->seeInNthEmailSubject(2, 'Aliquam eget');
+        $mailcatcher->seeInNthEmailSubject(3, 'maximus');
+    }
+
+    public function testDontSeeInNthEmailSubject()
+    {
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setMessages([
+            new Email(1, '', [], 'Test subject', ''),
+            new Email(2, '', [], 'Aliquam eget', ''),
+            new Email(2, '', [], 'Vivamus maximus', ''),
+        ]);
+
+        $mailcatcher->dontSeeInNthEmailSubject(2, 'Vivamus');
     }
 
     public function testSeeEmailCount()
@@ -266,13 +441,16 @@ class MailCatcherTest extends \Codeception\Test\Unit
 
 class MailCatcherTest_TestClass extends MailCatcher
 {
+    /**
+     * @var array $messages
+     */
+    private $messages = [];
     private $lastMessage;
     private $lastMessageTo;
     private $lastMessageFrom;
 
     public function __construct()
     {
-
     }
 
     public function getClient()
@@ -283,6 +461,26 @@ class MailCatcherTest_TestClass extends MailCatcher
     public function setClient(Client $client)
     {
         $this->mailcatcher = $client;
+    }
+
+    /**
+     * @return Email[]
+     */
+    protected function messages(): array
+    {
+        if (!empty($this->messages)) {
+            return $this->messages;
+        }
+        
+        return parent::messages();
+    }
+
+    /**
+     * @param Email[] $emails
+     */
+    public function setMessages(array $emails)
+    {
+        $this->messages = $emails;
     }
 
     public function setLastMessage(Email $email)
@@ -325,5 +523,23 @@ class MailCatcherTest_TestClass extends MailCatcher
         }
 
         return parent::lastMessageFrom($address);
+    }
+
+    public function nthMessage(int $nth): \Codeception\Util\Email
+    {
+        if ($nth < 1) {
+            $this->fail("nth must be greater than zero");
+        }
+
+        $messages = $this->messages();
+        if (empty($messages)) {
+            $this->fail("No messages received");
+        }
+
+        if (!isset($messages[$nth - 1])) {
+            $this->fail("No message found at location {$nth}");
+        }
+
+        return $messages[$nth - 1];
     }
 }

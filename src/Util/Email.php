@@ -8,6 +8,11 @@ class Email
      * @var int
      */
     private $id;
+    
+    /**
+     * @var string
+     */
+    private $sender;
 
     /**
      * @var string[]
@@ -27,9 +32,10 @@ class Email
     /**
      * @param string[] $recipients
      */
-    public function __construct(int $id, array $recipients, string $subject, string $source)
+    public function __construct(int $id, string $sender, array $recipients, string $subject, string $source)
     {
         $this->id = $id;
+        $this->sender = $sender;
         $this->recipients = $recipients;
         $this->subject = $subject;
         $this->source = $source;
@@ -40,6 +46,11 @@ class Email
         return $this->id;
     }
 
+    public function getSender(): string
+    {
+        return $this->sender;
+    }
+    
     /**
      * @return string[]
      */
@@ -65,6 +76,6 @@ class Email
 
     public static function createFromMailcatcherData(array $data): \Codeception\Util\Email
     {
-        return new self($data['id'], $data['recipients'], $data['subject'], $data['source']);
+        return new self($data['id'], $data['sender'], $data['recipients'], $data['subject'], $data['source']);
     }
 }
