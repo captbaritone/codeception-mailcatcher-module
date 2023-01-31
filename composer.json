@@ -17,7 +17,7 @@
         "ext-json": "*",
         "guzzlehttp/guzzle": "^6.0 || ^7.0",
         "codeception/codeception": "^3.0 || ^4.0",
-        "zbateson/mail-mime-parser": "^1.2"
+        "zbateson/mail-mime-parser": "^2.3"
     },
     "autoload": {
         "psr-4": {
