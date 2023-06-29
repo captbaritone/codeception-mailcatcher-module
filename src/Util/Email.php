@@ -27,7 +27,7 @@ class Email
     /**
      * @param string[] $recipients
      */
-    public function __construct(int $id, array $recipients, string $subject, string $source)
+    public function __construct(int $id, array $recipients, ?string $subject, string $source)
     {
         $this->id = $id;
         $this->recipients = $recipients;
