@@ -2,28 +2,54 @@
 
 namespace Codeception\Module;
 
+use Codeception\Codecept;
 use Codeception\Module;
 use Codeception\Util\Email;
 use GuzzleHttp\Client;
 use ZBateson\MailMimeParser\Message;
 
-class MailCatcher extends Module
+if (substr(Codecept::VERSION, 0, 1) === '4') {
+    class MailCatcher extends Module
+    {
+        /**
+         * @var array
+         */
+        protected $config = ['url', 'port', 'guzzleRequestOptions'];
+
+        /**
+         * @var Client
+         */
+        protected $mailcatcher;
+
+        /**
+         * @var array
+         */
+        protected $requiredFields = ['url', 'port'];
+
+        use MailCatcherImplementation;
+    }
+} else {
+    class MailCatcher extends Module
+    {
+        /**
+         * @var array
+         */
+        protected array $config = ['url', 'port', 'guzzleRequestOptions'];
+
+        protected Client $mailcatcher;
+
+        protected array $requiredFields = ['url', 'port'];
+
+        use MailCatcherImplementation;
+    }
+}
+
+/**
+ * @internal The methods as exposed by the MailCatcher class are public but do
+ *           not depend on the existence of this trait.
+ */
+trait MailCatcherImplementation
 {
-    /**
-     * @var Client
-     */
-    protected $mailcatcher;
-
-    /**
-     * @var array
-     */
-    protected $config = ['url', 'port', 'guzzleRequestOptions'];
-
-    /**
-     * @var array
-     */
-    protected $requiredFields = ['url', 'port'];
-
     public function _initialize(): void
     {
         $base_uri = trim($this->config['url'], '/') . ':' . $this->config['port'];
