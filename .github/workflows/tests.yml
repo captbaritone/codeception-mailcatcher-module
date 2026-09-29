@@ -44,8 +44,8 @@ jobs:
           php-version: ${{ matrix.php }}
       - uses: ramsey/composer-install@v3
         with:
-          dependency-versions: highest
-          composer-options: "--with=codeception/codeception:${{ matrix.codeception }}"
+          dependency-versions: ${{ matrix.deps }}
+          composer-options: "--with=codeception/codeception:${{ matrix.codeception }} ${{ case(matrix.codeception == '^4.0', '--with=behat/gherkin:<4.13', '') }}"
       - run: php vendor/bin/codecept build
       - name: Acceptance tests
         run: php vendor/bin/codecept run acceptance -d
