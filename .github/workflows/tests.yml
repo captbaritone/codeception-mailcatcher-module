@@ -47,7 +47,7 @@ jobs:
           COMPOSER_POLICY_ADVISORIES_BLOCK: 0
         with:
           dependency-versions: ${{ matrix.deps }}
-          composer-options: "--with=codeception/codeception:${{ matrix.codeception }} ${{ case(matrix.codeception == '^4.0', '--with=behat/gherkin:<4.13', '') }}"
+          composer-options: "--with=codeception/codeception:${{ matrix.codeception }} ${{ case(matrix.codeception == '^4.0', '--with=behat/gherkin:<4.13', '') }} ${{ case(matrix.php == '7.4', '', '--with=symfony/yaml:>=2.8.0') }}"
       - run: php vendor/bin/codecept build
       - name: Acceptance tests
         run: php vendor/bin/codecept run acceptance -d
