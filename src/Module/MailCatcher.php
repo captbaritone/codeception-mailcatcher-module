@@ -308,7 +308,7 @@ trait MailCatcherImplementation
         $regex = '#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#';
         $email = $this->lastMessage();
 
-        $message = Message::from($email->getSource());
+        $message = Message::from($email->getSource(), false);
 
         $text = $message->getTextContent();
         preg_match_all($regex, $text, $text_matches);
@@ -331,7 +331,7 @@ trait MailCatcherImplementation
     {
         $email = $this->lastMessage();
 
-        $message = Message::from($email->getSource());
+        $message = Message::from($email->getSource(), false);
 
         $attachments = [];
 
@@ -354,7 +354,7 @@ trait MailCatcherImplementation
     public function seeAttachmentInLastEmail(string $expectedFilename): void
     {
         $email = $this->lastMessage();
-        $message = Message::from($email->getSource());
+        $message = Message::from($email->getSource(), false);
 
         foreach ($message->getAllAttachmentParts() as $attachmentPart) {
             if ($attachmentPart->getFilename() === $expectedFilename) {
@@ -384,7 +384,7 @@ trait MailCatcherImplementation
     public function seeEmailAttachmentCount(int $expectedCount): void
     {
         $email = $this->lastMessage();
-        $message = Message::from($email->getSource());
+        $message = Message::from($email->getSource(), false);
         $this->assertEquals($expectedCount, $message->getAttachmentCount());
     }
 
