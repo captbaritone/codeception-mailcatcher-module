@@ -1,0 +1,47 @@
+name: Release Comments
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  comment:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const release = context.payload.release;
+            const body = `Released in [${release.tag_name}](${release.html_url}).`;
+            // Match the PR numbers in Release Drafter's change-template.
+            const numbers = new Set(
+              [...(release.body || '').matchAll(/^\* .+ \(#(\d+)\) .+$/gm)]
+                .map(match => Number(match[1]))
+            );
+
+            for (const number of numbers) {
+              const { data: pr } = await github.rest.pulls.get({
+                ...context.repo,
+                pull_number: number,
+              });
+              if (!pr.merged_at) continue;
+
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                ...context.repo,
+                issue_number: number,
+                per_page: 100,
+              });
+              if (comments.some(comment =>
+                comment.user.login === 'github-actions[bot]' && comment.body === body
+              )) continue;
+
+              await github.rest.issues.createComment({
+                ...context.repo,
+                issue_number: number,
+                body,
+              });
+            }
