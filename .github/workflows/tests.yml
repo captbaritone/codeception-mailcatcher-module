@@ -37,7 +37,7 @@ jobs:
           coverage: xdebug
           ini-values: "sendmail_path = /usr/bin/env catchmail -f some@from.address"
           php-version: ${{ matrix.php }}
-      - uses: ramsey/composer-install@v3
+      - uses: ramsey/composer-install@v4
         env:
           COMPOSER_POLICY_ADVISORIES_BLOCK: 0
         with:
