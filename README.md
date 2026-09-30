@@ -1,7 +1,5 @@
 # Codeception MailCatcher Module
 
-[![Build Status](https://travis-ci.org/captbaritone/codeception-mailcatcher-module.svg)](https://travis-ci.org/captbaritone/codeception-mailcatcher-module)
-
 This module will let you test emails that are sent during your Codeception
 acceptance tests. It depends upon you having
 [MailCatcher](http://mailcatcher.me/) installed on your development server.
