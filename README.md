@@ -13,7 +13,7 @@ features.
 
 ## Installation
 
-Requires PHP 8.3 or later.
+Requires PHP 8.3 or later and Codeception 5.
 
 1. Add the package to your `composer.json`:
 
