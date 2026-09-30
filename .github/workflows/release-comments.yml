@@ -3,6 +3,8 @@ name: Release Comments
 on:
   release:
     types: [published]
+  # Manually backfill all published releases as github-actions[bot].
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -15,15 +17,39 @@ jobs:
       - uses: actions/github-script@v8
         with:
           script: |
-            const release = context.payload.release;
-            const body = `Released in [${release.tag_name}](${release.html_url}).`;
-            // Match the PR numbers in Release Drafter's change-template.
-            const numbers = new Set(
-              [...(release.body || '').matchAll(/^\* .+ \(#(\d+)\) .+$/gm)]
-                .map(match => Number(match[1]))
-            );
+            const targets = [];
+            if (context.eventName === 'workflow_dispatch') {
+              const releases = await github.paginate(github.rest.repos.listReleases, {
+                ...context.repo, per_page: 100,
+              });
+              const prs = await github.paginate(github.rest.pulls.list, {
+                ...context.repo, state: 'closed', per_page: 100,
+              });
+              const assigned = new Set();
+              for (const release of releases.filter(r => !r.draft)
+                .sort((a, b) => a.published_at.localeCompare(b.published_at))) {
+                const commits = await github.paginate(github.rest.repos.listCommits, {
+                  ...context.repo, sha: release.tag_name, per_page: 100,
+                });
+                const shas = new Set(commits.map(commit => commit.sha));
+                for (const pr of prs) {
+                  if (!pr.merged_at || assigned.has(pr.number) || !shas.has(pr.merge_commit_sha)) continue;
+                  targets.push({ release, number: pr.number });
+                  assigned.add(pr.number);
+                }
+              }
+            } else {
+              const release = context.payload.release;
+              // Match the PR numbers in Release Drafter's change-template.
+              const numbers = new Set(
+                [...(release.body || '').matchAll(/^\* .+ \(#(\d+)\) .+$/gm)]
+                  .map(match => Number(match[1]))
+              );
+              for (const number of numbers) targets.push({ release, number });
+            }
 
-            for (const number of numbers) {
+            for (const { release, number } of targets) {
+              const body = `Released in [${release.tag_name}](${release.html_url}).`;
               const { data: pr } = await github.rest.pulls.get({
                 ...context.repo,
                 pull_number: number,
@@ -44,4 +70,5 @@ jobs:
                 issue_number: number,
                 body,
               });
+              core.info(`Commented on #${number}: ${release.tag_name}`);
             }
