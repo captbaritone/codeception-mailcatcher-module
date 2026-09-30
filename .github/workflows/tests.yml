@@ -17,13 +17,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4', '8.5']
+        php: ['8.3', '8.4', '8.5']
         codeception: ['^4.0', '^5.0']
         deps: ['lowest', 'latest']
         exclude:
-          # Codeception 5 requires PHP ≥ 8
-          - php: '7.4'
-            codeception: '^5.0'
           # PHP >= 8.5 will not run Codeception 4
           - php: '8.5'
             codeception: '^4.0'
@@ -55,7 +52,7 @@ jobs:
           COMPOSER_POLICY_ADVISORIES_BLOCK: 0
         with:
           dependency-versions: ${{ matrix.deps }}
-          composer-options: "--with=codeception/codeception:${{ matrix.codeception }} ${{ case(matrix.php == '8.5', '--with codeception/codeception:>=5.3.4', '') }} ${{ case(matrix.codeception == '^4.0', '--with=behat/gherkin:<4.13', '') }} ${{ case(matrix.php == '7.4', '', '--with=symfony/yaml:>=2.8.0 --with=phpunit/phpunit:>=9.6') }}"
+          composer-options: "--with=codeception/codeception:${{ matrix.codeception }} ${{ case(matrix.php == '8.5', '--with codeception/codeception:>=5.3.4', '') }} ${{ case(matrix.codeception == '^4.0', '--with=behat/gherkin:<4.13', '') }} --with=symfony/yaml:>=2.8.0 --with=phpunit/phpunit:>=9.6"
       - run: php vendor/bin/codecept build
       - name: Acceptance tests
         run: php vendor/bin/codecept run acceptance -d

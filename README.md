@@ -13,6 +13,8 @@ features.
 
 ## Installation
 
+Requires PHP 8.3 or later.
+
 1. Add the package to your `composer.json`:
 
     `composer require --dev captbaritone/mailcatcher-codeception-module`
