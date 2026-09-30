@@ -2,54 +2,22 @@
 
 namespace Codeception\Module;
 
-use Codeception\Codecept;
 use Codeception\Module;
 use Codeception\Util\Email;
 use GuzzleHttp\Client;
 use ZBateson\MailMimeParser\Message;
 
-if (substr(Codecept::VERSION, 0, 1) === '4') {
-    class MailCatcher extends Module
-    {
-        /**
-         * @var array
-         */
-        protected $config = ['url', 'port', 'guzzleRequestOptions'];
-
-        /**
-         * @var Client
-         */
-        protected $mailcatcher;
-
-        /**
-         * @var array
-         */
-        protected $requiredFields = ['url', 'port'];
-
-        use MailCatcherImplementation;
-    }
-} else {
-    class MailCatcher extends Module
-    {
-        /**
-         * @var array
-         */
-        protected array $config = ['url', 'port', 'guzzleRequestOptions'];
-
-        protected Client $mailcatcher;
-
-        protected array $requiredFields = ['url', 'port'];
-
-        use MailCatcherImplementation;
-    }
-}
-
-/**
- * @internal The methods as exposed by the MailCatcher class are public but do
- *           not depend on the existence of this trait.
- */
-trait MailCatcherImplementation
+class MailCatcher extends Module
 {
+    /**
+     * @var array
+     */
+    protected array $config = ['url', 'port', 'guzzleRequestOptions'];
+
+    protected Client $mailcatcher;
+
+    protected array $requiredFields = ['url', 'port'];
+
     public function _initialize(): void
     {
         $base_uri = trim($this->config['url'], '/') . ':' . $this->config['port'];
@@ -425,38 +393,22 @@ trait MailCatcherImplementation
 
     protected function seeInEmailSubject(Email $email, string $expected): void
     {
-        if(method_exists($this, 'assertStringContainsString')){
-            $this->assertStringContainsString($expected, $email->getSubject(), "Email Subject Contains");
-        }else{
-            $this->assertContains($expected, $email->getSubject(), "Email Subject Contains");
-        }
+        $this->assertStringContainsString($expected, $email->getSubject(), "Email Subject Contains");
     }
 
     protected function dontSeeInEmailSubject(Email $email, string $unexpected): void
     {
-        if(method_exists($this, 'assertStringContainsString')){
-            $this->assertStringNotContainsString($unexpected, $email->getSubject(), "Email Subject Does Not Contain");
-        }else{
-            $this->assertNotContains($unexpected, $email->getSubject(), "Email Subject Does Not Contain");
-        }
+        $this->assertStringNotContainsString($unexpected, $email->getSubject(), "Email Subject Does Not Contain");
     }
 
     protected function seeInEmail(Email $email, string $expected): void
     {
-        if(method_exists($this, 'assertStringContainsString')){
-            $this->assertStringContainsString($expected, $email->getSourceQuotedPrintableDecoded(), "Email Contains");
-        }else{
-            $this->assertContains($expected, $email->getSourceQuotedPrintableDecoded(), "Email Contains");
-        }
+        $this->assertStringContainsString($expected, $email->getSourceQuotedPrintableDecoded(), "Email Contains");
     }
 
     protected function dontSeeInEmail(Email $email, string $unexpected): void
     {
-        if(method_exists($this, 'assertStringContainsString')){
-            $this->assertStringNotContainsString($unexpected, $email->getSourceQuotedPrintableDecoded(), "Email Does Not Contain");
-        }else{
-            $this->assertNotContains($unexpected, $email->getSourceQuotedPrintableDecoded(), "Email Does Not Contain");
-        }
+        $this->assertStringNotContainsString($unexpected, $email->getSourceQuotedPrintableDecoded(), "Email Does Not Contain");
     }
 
     protected function grabMatchesFromEmail(Email $email, string $regex): array
