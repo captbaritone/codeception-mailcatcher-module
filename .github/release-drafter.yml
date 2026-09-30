@@ -1,4 +1,54 @@
-template: |
-  ## What’s Changed
+categories:
+  - title: Breaking Changes
+    exclusive: true
+    when:
+      - label: breaking-change
+      - conventional:
+          breaking: true
+  - title: Features
+    exclusive: true
+    when:
+      labels:
+        - enhancement
+        - compatibility
+  - title: Bug Fixes
+    exclusive: true
+    when:
+      label: bug
+  # Dependency updates and otherwise uncategorized PRs go here.
+  - title: Maintenance
 
+category-template: '### $TITLE'
+change-template: '* $TITLE (#$NUMBER) $AUTHORS'
+change-title-escapes: '\<*_&'
+no-changes-template: '* No changes'
+template: |
   $CHANGES
+
+# Keep Breaking Changes at the top level and the other headings at level three.
+replacers:
+  - search: '/^### Breaking Changes/m'
+    replace: '## Breaking Changes'
+
+autolabeler:
+  - label: enhancement
+    title:
+      - '/^(feat(\([^)]*\))?!?:|add\b)/i'
+    branch:
+      - '/^(feat|feature|enhancement)\//i'
+  - label: bug
+    title:
+      - '/^(fix(\([^)]*\))?!?:|fix(es|ed)?\b)/i'
+    branch:
+      - '/^(fix|bugfix|hotfix)\//i'
+  - label: dependencies
+    title:
+      - '/^(build\(deps(-dev)?\):|(?:composer|github-actions)(\([^)]*\))?:|bump\b)/i'
+    branch:
+      - '/^dependabot\//'
+  - label: breaking-change
+    title:
+      - '/^[a-z]+(\([^)]*\))?!:/i'
+      - '/^drop\b.*\bsupport\b/i'
+    body:
+      - '/^BREAKING[ -]CHANGE:/m'
