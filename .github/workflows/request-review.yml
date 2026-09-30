@@ -1,0 +1,29 @@
+name: Request Review
+
+on:
+  pull_request_target:
+    types: [opened, converted_to_draft, ready_for_review]
+
+permissions:
+  pull-requests: write
+
+jobs:
+  review:
+    if: github.event.pull_request.user.login != 'Jamesking56'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v8
+        with:
+          script: |
+            const reviewer = 'Jamesking56';
+            const pr = context.payload.pull_request;
+            const params = {
+              ...context.repo,
+              pull_number: pr.number,
+              reviewers: [reviewer],
+            };
+            if (!pr.draft) {
+              await github.rest.pulls.requestReviewers(params);
+            } else if (pr.requested_reviewers.some(user => user.login === reviewer)) {
+              await github.rest.pulls.removeRequestedReviewers(params);
+            }
