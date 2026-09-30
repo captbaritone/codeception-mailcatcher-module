@@ -11,6 +11,18 @@ PHP](http://codeception.com/12-15-2013/testing-emails-in-php). It is currently
 very simple. Send a pull request or file an issue if you have ideas for more
 features.
 
+## Version Support
+
+Only version 4.x of this package is supported.
+
+| Package version | Support status |
+| --- | --- |
+| 4.x | Supported |
+| 3.x | Unsupported |
+| 2.x | Unsupported |
+| 1.x | Unsupported |
+| 0.x | Unsupported |
+
 ## Installation
 
 Requires PHP 8.3 or later and Codeception 5.
