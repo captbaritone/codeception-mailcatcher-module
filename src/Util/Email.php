@@ -5,39 +5,25 @@ namespace Codeception\Util;
 class Email
 {
     /**
-     * @var int
-     */
-    private $id;
-
-    /**
-     * @var string[]
-     */
-    private $recipients;
-
-    /**
-     * @var string
-     */
-    private $subject;
-
-    /**
-     * @var string
-     */
-    private $source;
-
-    /**
      * @param string[] $recipients
      */
-    public function __construct(int $id, array $recipients, ?string $subject, string $source)
-    {
-        $this->id = $id;
-        $this->recipients = $recipients;
-        $this->subject = $subject;
-        $this->source = $source;
+    public function __construct(
+        private readonly int $id,
+        private readonly array $recipients,
+        private readonly ?string $subject,
+        private readonly string $source,
+        private readonly string $sender = '',
+    ) {
     }
 
     public function getId(): int
     {
         return $this->id;
+    }
+
+    public function getSender(): string
+    {
+        return $this->sender;
     }
 
     /**
@@ -65,6 +51,6 @@ class Email
 
     public static function createFromMailcatcherData(array $data): \Codeception\Util\Email
     {
-        return new self($data['id'], $data['recipients'], $data['subject'], $data['source']);
+        return new self($data['id'], $data['recipients'], $data['subject'], $data['source'], $data['sender'] ?? '');
     }
 }

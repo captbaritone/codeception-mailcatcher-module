@@ -60,6 +60,11 @@ class MailCatcher extends Module
         $this->seeInEmail($email, $expected);
     }
 
+    public function seeInNthEmail(int $nth, string $expected): void
+    {
+        $this->seeInEmail($this->nthMessage($nth), $expected);
+    }
+
     /**
      * See In Last Email subject
      *
@@ -73,6 +78,11 @@ class MailCatcher extends Module
         $this->seeInEmailSubject($email, $expected);
     }
 
+    public function seeInNthEmailSubject(int $nth, string $expected): void
+    {
+        $this->seeInEmailSubject($this->nthMessage($nth), $expected);
+    }
+
     /**
      * Don't See In Last Email subject
      *
@@ -84,6 +94,11 @@ class MailCatcher extends Module
         $this->dontSeeInEmailSubject($email, $expected);
     }
 
+    public function dontSeeInNthEmailSubject(int $nth, string $unexpected): void
+    {
+        $this->dontSeeInEmailSubject($this->nthMessage($nth), $unexpected);
+    }
+
     /**
      * Don't See In Last Email
      *
@@ -93,6 +108,31 @@ class MailCatcher extends Module
     {
         $email = $this->lastMessage();
         $this->dontSeeInEmail($email, $unexpected);
+    }
+
+    public function dontSeeInNthEmail(int $nth, string $unexpected): void
+    {
+        $this->dontSeeInEmail($this->nthMessage($nth), $unexpected);
+    }
+
+    public function seeInLastEmailSender(string $expected): void
+    {
+        $this->seeInEmailSender($this->lastMessage(), $expected);
+    }
+
+    public function seeInNthEmailSender(int $nth, string $expected): void
+    {
+        $this->seeInEmailSender($this->nthMessage($nth), $expected);
+    }
+
+    public function seeInLastEmailRecipient(string $expected): void
+    {
+        $this->seeInEmailRecipients($this->lastMessage(), $expected);
+    }
+
+    public function seeInNthEmailRecipient(int $nth, string $expected): void
+    {
+        $this->seeInEmailRecipients($this->nthMessage($nth), $expected);
     }
 
     /**
@@ -108,6 +148,11 @@ class MailCatcher extends Module
         $this->seeInEmail($email, $expected);
     }
 
+    public function seeInNthEmailTo(int $nth, string $address, string $expected): void
+    {
+        $this->seeInEmail($this->nthMessageTo($nth, $address), $expected);
+    }
+
     /**
      * Don't See In Last Email To
      *
@@ -117,6 +162,11 @@ class MailCatcher extends Module
     {
         $email = $this->lastMessageTo($address);
         $this->dontSeeInEmail($email, $unexpected);
+    }
+
+    public function dontSeeInNthEmailTo(int $nth, string $address, string $unexpected): void
+    {
+        $this->dontSeeInEmail($this->nthMessageTo($nth, $address), $unexpected);
     }
 
     /**
@@ -132,6 +182,11 @@ class MailCatcher extends Module
         $this->seeInEmailSubject($email, $expected);
     }
 
+    public function seeInNthEmailSubjectTo(int $nth, string $address, string $expected): void
+    {
+        $this->seeInEmailSubject($this->nthMessageTo($nth, $address), $expected);
+    }
+
     /**
      * Don't See In Last Email Subject To
      *
@@ -141,6 +196,11 @@ class MailCatcher extends Module
     {
         $email = $this->lastMessageTo($address);
         $this->dontSeeInEmailSubject($email, $unexpected);
+    }
+
+    public function dontSeeInNthEmailSubjectTo(int $nth, string $address, string $unexpected): void
+    {
+        $this->dontSeeInEmailSubject($this->nthMessageTo($nth, $address), $unexpected);
     }
 
     public function lastMessage(): \Codeception\Util\Email
@@ -155,6 +215,11 @@ class MailCatcher extends Module
         return $this->emailFromId($last['id']);
     }
 
+    public function nthMessage(int $nth): \Codeception\Util\Email
+    {
+        return $this->emailAtPosition($this->messagesInReceivedOrder(), $nth, "No message found at position {$nth}");
+    }
+
     public function lastMessageTo(string $address): \Codeception\Util\Email
     {
         $ids = [];
@@ -164,10 +229,8 @@ class MailCatcher extends Module
         }
 
         foreach ($messages as $message) {
-            foreach ($message['recipients'] as $recipient) {
-                if (strpos($recipient, $address) !== false) {
-                    $ids[] = $message['id'];
-                }
+            if ($this->isSentTo($message, $address)) {
+                $ids[] = $message['id'];
             }
         }
 
@@ -176,6 +239,19 @@ class MailCatcher extends Module
         }
 
         return $this->emailFromId(max($ids));
+    }
+
+    public function nthMessageTo(int $nth, string $address): \Codeception\Util\Email
+    {
+        $messages = array_filter(
+            $this->messagesInReceivedOrder(),
+            fn (array $message): bool => $this->isSentTo($message, $address)
+        );
+        if (empty($messages)) {
+            $this->fail("No messages sent to {$address}");
+        }
+
+        return $this->emailAtPosition($messages, $nth, "No message found at position {$nth} sent to {$address}");
     }
 
     public function lastMessageFrom(string $address): \Codeception\Util\Email
@@ -222,6 +298,14 @@ class MailCatcher extends Module
     }
 
     /**
+     * @return mixed[]
+     */
+    public function grabMatchesFromNthEmail(int $nth, string $regex): array
+    {
+        return $this->grabMatchesFromEmail($this->nthMessage($nth), $regex);
+    }
+
+    /**
      * Grab From Last Email
      *
      * Look for a regex in the email source and return it
@@ -232,6 +316,11 @@ class MailCatcher extends Module
     {
         $matches = $this->grabMatchesFromLastEmail($regex);
         return $matches[0];
+    }
+
+    public function grabFromNthEmail(int $nth, string $regex): string
+    {
+        return $this->grabMatchesFromNthEmail($nth, $regex)[0];
     }
 
     /**
@@ -250,6 +339,14 @@ class MailCatcher extends Module
     }
 
     /**
+     * @return mixed[]
+     */
+    public function grabMatchesFromNthEmailTo(int $nth, string $address, string $regex): array
+    {
+        return $this->grabMatchesFromEmail($this->nthMessageTo($nth, $address), $regex);
+    }
+
+    /**
      * Grab From Last Email To
      *
      * Look for a regex in most recent email sent to $addres email source and
@@ -263,6 +360,11 @@ class MailCatcher extends Module
         return $matches[0];
     }
 
+    public function grabFromNthEmailTo(int $nth, string $address, string $regex): string
+    {
+        return $this->grabMatchesFromNthEmailTo($nth, $address, $regex)[0];
+    }
+
     /**
      * Grab Urls From Email
      *
@@ -273,18 +375,15 @@ class MailCatcher extends Module
      */
     public function grabUrlsFromLastEmail(): array
     {
-        $regex = '#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#';
-        $email = $this->lastMessage();
+        return $this->grabUrlsFromEmail($this->lastMessage());
+    }
 
-        $message = Message::from($email->getSource(), false);
-
-        $text = $message->getTextContent();
-        preg_match_all($regex, $text, $text_matches);
-
-        $html = $message->getHtmlContent();
-        preg_match_all($regex, $html, $html_matches);
-
-        return array_merge($text_matches[0], $html_matches[0]);
+    /**
+     * @return string[]
+     */
+    public function grabUrlsFromNthEmail(int $nth): array
+    {
+        return $this->grabUrlsFromEmail($this->nthMessage($nth));
     }
 
     /**
@@ -297,19 +396,15 @@ class MailCatcher extends Module
      */
     public function grabAttachmentsFromLastEmail(): array
     {
-        $email = $this->lastMessage();
+        return $this->grabAttachmentsFromEmail($this->lastMessage());
+    }
 
-        $message = Message::from($email->getSource(), false);
-
-        $attachments = [];
-
-        foreach ($message->getAllAttachmentParts() as $attachmentPart) {
-            $filename = $attachmentPart->getFilename();
-            $content = $attachmentPart->getContent();
-            $attachments[$filename] = $content;
-        }
-
-        return $attachments;
+    /**
+     * @return array<string, string>
+     */
+    public function grabAttachmentsFromNthEmail(int $nth): array
+    {
+        return $this->grabAttachmentsFromEmail($this->nthMessage($nth));
     }
 
     /**
@@ -321,15 +416,12 @@ class MailCatcher extends Module
      **/
     public function seeAttachmentInLastEmail(string $expectedFilename): void
     {
-        $email = $this->lastMessage();
-        $message = Message::from($email->getSource(), false);
+        $this->seeAttachmentInEmail($this->lastMessage(), $expectedFilename);
+    }
 
-        foreach ($message->getAllAttachmentParts() as $attachmentPart) {
-            if ($attachmentPart->getFilename() === $expectedFilename) {
-                return;
-            }
-        }
-        $this->fail("Filename not found in attachments.");
+    public function seeAttachmentInNthEmail(int $nth, string $expectedFilename): void
+    {
+        $this->seeAttachmentInEmail($this->nthMessage($nth), $expectedFilename);
     }
 
     /**
@@ -351,9 +443,12 @@ class MailCatcher extends Module
      **/
     public function seeEmailAttachmentCount(int $expectedCount): void
     {
-        $email = $this->lastMessage();
-        $message = Message::from($email->getSource(), false);
-        $this->assertEquals($expectedCount, $message->getAttachmentCount());
+        $this->seeAttachmentCountInEmail($this->lastMessage(), $expectedCount);
+    }
+
+    public function seeNthEmailAttachmentCount(int $nth, int $expectedCount): void
+    {
+        $this->seeAttachmentCountInEmail($this->nthMessage($nth), $expectedCount);
     }
 
     // ----------- HELPER METHODS BELOW HERE -----------------------//
@@ -370,12 +465,47 @@ class MailCatcher extends Module
         $messages = json_decode($response->getBody(), true);
         // Ensure messages are shown in the order they were recieved
         // https://github.com/sj26/mailcatcher/pull/184
-        usort($messages, function ($messageA, $messageB): int {
-            $sortKeyA = $messageA['created_at'] . $messageA['id'];
-            $sortKeyB = $messageB['created_at'] . $messageB['id'];
-            return ($sortKeyA > $sortKeyB) ? -1 : 1;
-        });
+        usort(
+            $messages,
+            static fn (array $messageA, array $messageB): int
+                => [$messageB['created_at'], $messageB['id']] <=> [$messageA['created_at'], $messageA['id']]
+        );
         return $messages;
+    }
+
+    protected function messagesInReceivedOrder(): array
+    {
+        $messages = $this->messages();
+        if (empty($messages)) {
+            $this->fail("No messages received");
+        }
+
+        return array_reverse($messages);
+    }
+
+    protected function emailAtPosition(array $messages, int $nth, string $notFoundMessage): \Codeception\Util\Email
+    {
+        if ($nth < 1) {
+            $this->fail("Position must be 1 or greater, {$nth} given");
+        }
+
+        $message = array_values($messages)[$nth - 1] ?? null;
+        if ($message === null) {
+            $this->fail($notFoundMessage);
+        }
+
+        return $this->emailFromId($message['id']);
+    }
+
+    protected function isSentTo(array $message, string $address): bool
+    {
+        foreach ($message['recipients'] as $recipient) {
+            if (str_contains($recipient, $address)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -411,10 +541,62 @@ class MailCatcher extends Module
         $this->assertStringNotContainsString($unexpected, $email->getSourceQuotedPrintableDecoded(), "Email Does Not Contain");
     }
 
+    protected function seeInEmailSender(Email $email, string $expected): void
+    {
+        $this->assertStringContainsString($expected, $email->getSender(), "Email Sender Contains");
+    }
+
+    protected function seeInEmailRecipients(Email $email, string $expected): void
+    {
+        $this->assertStringContainsString($expected, implode(', ', $email->getRecipients()), "Email Recipients Contain");
+    }
+
     protected function grabMatchesFromEmail(Email $email, string $regex): array
     {
         preg_match($regex, $email->getSourceQuotedPrintableDecoded(), $matches);
         $this->assertNotEmpty($matches, "No matches found for $regex");
         return $matches;
+    }
+
+    /**
+     * @return string[]
+     */
+    protected function grabUrlsFromEmail(Email $email): array
+    {
+        $regex = '#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#';
+        $message = Message::from($email->getSource(), false);
+
+        preg_match_all($regex, $message->getTextContent() ?? '', $textMatches);
+        preg_match_all($regex, $message->getHtmlContent() ?? '', $htmlMatches);
+
+        return array_merge($textMatches[0], $htmlMatches[0]);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function grabAttachmentsFromEmail(Email $email): array
+    {
+        $attachments = [];
+        foreach (Message::from($email->getSource(), false)->getAllAttachmentParts() as $attachmentPart) {
+            $attachments[$attachmentPart->getFilename()] = $attachmentPart->getContent();
+        }
+
+        return $attachments;
+    }
+
+    protected function seeAttachmentInEmail(Email $email, string $expectedFilename): void
+    {
+        foreach (Message::from($email->getSource(), false)->getAllAttachmentParts() as $attachmentPart) {
+            if ($attachmentPart->getFilename() === $expectedFilename) {
+                return;
+            }
+        }
+        $this->fail("Filename not found in attachments.");
+    }
+
+    protected function seeAttachmentCountInEmail(Email $email, int $expectedCount): void
+    {
+        $this->assertEquals($expectedCount, Message::from($email->getSource(), false)->getAttachmentCount());
     }
 }

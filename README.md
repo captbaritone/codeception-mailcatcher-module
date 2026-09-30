@@ -280,6 +280,58 @@ Example:
 * Param $email
 * Param $regex
 
+### seeInLastEmailSender / seeInLastEmailRecipient
+
+Checks that the sender (or one of the recipients) of the last email contains a value.
+
+Example:
+
+    <?php
+    $I->seeInLastEmailSender('noreply@example.com');
+    $I->seeInLastEmailRecipient('user@example.com');
+    ?>
+
+* Param $text
+
+### Nth email actions
+
+Every "last email" action has an "nth email" counterpart that takes the
+position as its first argument. Positions start at 1 and count in the order
+the emails were received, so `1` is the first email and `2` the second.
+For the `...To` variants, only emails sent to the given address are counted.
+
+| Last email | Nth email |
+| --- | --- |
+| `seeInLastEmail($text)` | `seeInNthEmail($nth, $text)` |
+| `dontSeeInLastEmail($text)` | `dontSeeInNthEmail($nth, $text)` |
+| `seeInLastEmailSubject($text)` | `seeInNthEmailSubject($nth, $text)` |
+| `dontSeeInLastEmailSubject($text)` | `dontSeeInNthEmailSubject($nth, $text)` |
+| `seeInLastEmailSender($text)` | `seeInNthEmailSender($nth, $text)` |
+| `seeInLastEmailRecipient($text)` | `seeInNthEmailRecipient($nth, $text)` |
+| `seeInLastEmailTo($email, $text)` | `seeInNthEmailTo($nth, $email, $text)` |
+| `dontSeeInLastEmailTo($email, $text)` | `dontSeeInNthEmailTo($nth, $email, $text)` |
+| `seeInLastEmailSubjectTo($email, $text)` | `seeInNthEmailSubjectTo($nth, $email, $text)` |
+| `dontSeeInLastEmailSubjectTo($email, $text)` | `dontSeeInNthEmailSubjectTo($nth, $email, $text)` |
+| `grabMatchesFromLastEmail($regex)` | `grabMatchesFromNthEmail($nth, $regex)` |
+| `grabFromLastEmail($regex)` | `grabFromNthEmail($nth, $regex)` |
+| `grabMatchesFromLastEmailTo($email, $regex)` | `grabMatchesFromNthEmailTo($nth, $email, $regex)` |
+| `grabFromLastEmailTo($email, $regex)` | `grabFromNthEmailTo($nth, $email, $regex)` |
+| `grabUrlsFromLastEmail()` | `grabUrlsFromNthEmail($nth)` |
+| `grabAttachmentsFromLastEmail()` | `grabAttachmentsFromNthEmail($nth)` |
+| `seeAttachmentInLastEmail($filename)` | `seeAttachmentInNthEmail($nth, $filename)` |
+| `seeEmailAttachmentCount($count)` | `seeNthEmailAttachmentCount($nth, $count)` |
+| `lastMessage()` | `nthMessage($nth)` |
+| `lastMessageTo($email)` | `nthMessageTo($nth, $email)` |
+
+Example:
+
+    <?php
+    // A sign-up sends a welcome email first, then a confirmation email
+    $I->seeInNthEmail(1, 'Welcome!');
+    $I->seeInNthEmailSubject(2, 'Please confirm your address');
+    $I->seeInNthEmailTo(2, 'admin@example.com', 'A new user has signed up');
+    ?>
+
 ### seeEmailCount
 
 Asserts that a certain number of emails have been sent since the last time
