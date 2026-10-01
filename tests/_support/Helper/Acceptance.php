@@ -10,12 +10,13 @@ use PHPMailer\PHPMailer\PHPMailer;
 class Acceptance extends \Codeception\Module
 {
     public function sendEmail(
-        string $to,
+        string|array $to,
         string $subject,
         string $body,
         bool $isHtml = false,
         ?string $encoding = null,
-        array $attachments = []
+        array $attachments = [],
+        string $from = 'sender@example.com'
     ): void {
         $phpmailer = new PHPMailer();
         $phpmailer->isSMTP();
@@ -28,8 +29,10 @@ class Acceptance extends \Codeception\Module
             $phpmailer->addAttachment($attachment, $attachmentName);
         }
 
-        $phpmailer->addAddress($to);
-        $phpmailer->setFrom("sender@example.com");
+        foreach ((array) $to as $address) {
+            $phpmailer->addAddress($address);
+        }
+        $phpmailer->setFrom($from);
         $phpmailer->Subject = $subject;
         $phpmailer->Body = $body;
         $phpmailer->isHTML($isHtml);
