@@ -392,7 +392,16 @@ class MailCatcher extends Module
      */
     public function grabUrlForLinkFromLastEmail(string $label): string
     {
-        $message = Message::from($this->lastMessage()->getSource(), false);
+        return $this->grabUrlForLinkFromEmail($this->lastMessage(), $label);
+    }
+
+    /**
+     * Return the URL of the first link with an exact, case-sensitive label
+     * in the given email's HTML body. Fail if no matching link has an href.
+     */
+    public function grabUrlForLinkFromEmail(Email $email, string $label): string
+    {
+        $message = Message::from($email->getSource(), false);
         $html = $message->getHtmlContent();
 
         if ($html !== null && $html !== '') {

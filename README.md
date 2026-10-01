@@ -246,6 +246,36 @@ For `<a href="http://second-link.com">Second link</a>`, this returns
 
 * Param $label
 
+### grabUrlForLinkFromEmail
+
+Returns the `href` of the first link whose text exactly matches the label in
+the given email's HTML body. Matching is case-sensitive. Nested tags and HTML
+entities are decoded. Whitespace in the label is preserved.
+
+Fails if the email has no HTML body or no matching link with an `href`.
+
+Example:
+
+```php
+$email = $I->lastMessageTo('user@example.com');
+$url = $I->grabUrlForLinkFromEmail($email, 'Second link');
+```
+
+To use the last email:
+
+```php
+$url = $I->grabUrlForLinkFromEmail($I->lastMessage(), 'Second link');
+```
+
+For `<a href="http://second-link.com">Second link</a>`, this returns
+`http://second-link.com`.
+
+Use an `Email` object from `lastMessage()`, `lastMessageTo()`, or
+`lastMessageFrom()`, or one you created directly.
+
+* Param $email
+* Param $label
+
 ### lastMessageFrom
 
 Grab the full email object sent to an address.
