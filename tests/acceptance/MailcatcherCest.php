@@ -284,4 +284,116 @@ class MailcatcherCest
             $I->seeEmailAttachmentCount(3);
         });
     }
+
+    public function test_see_in_nth_email(AcceptanceTester $I)
+    {
+        $I->sendEmail('user@example.com', 'Subject Line', "First");
+        $I->sendEmail('user@example.com', 'Subject Line', "Second");
+        $I->sendEmail('user@example.com', 'Subject Line', "Third");
+        $I->seeInNthEmail(2, "Second");
+        $I->dontSeeInNthEmail(2, "Third");
+    }
+
+    public function test_see_in_nth_email_subject(AcceptanceTester $I)
+    {
+        $I->sendEmail('user@example.com', 'First Subject', "Hello World!");
+        $I->sendEmail('user@example.com', 'Second Subject', "Hello World!");
+        $I->sendEmail('user@example.com', 'Third Subject', "Hello World!");
+        $I->seeInNthEmailSubject(2, 'Second Subject');
+        $I->dontSeeInNthEmailSubject(2, 'Third Subject');
+    }
+
+    public function test_fail_nth_email_beyond_received_emails(AcceptanceTester $I)
+    {
+        $I->sendEmail('user@example.com', 'Subject Line', "Hello World!");
+        $I->expectThrowable(new Exception("No message found at position 2"), function() use ($I) {
+            $I->seeInNthEmail(2, "Hello World!");
+        });
+    }
+
+    public function test_see_in_email_sender(AcceptanceTester $I)
+    {
+        $I->sendEmail('user@example.com', 'Subject Line', "Hello World!", false, null, [], 'first@example.com');
+        $I->sendEmail('user@example.com', 'Subject Line', "Hello World!", false, null, [], 'second@example.com');
+        $I->sendEmail('user@example.com', 'Subject Line', "Hello World!", false, null, [], 'third@example.com');
+        $I->seeInLastEmailSender('third@example.com');
+        $I->seeInNthEmailSender(2, 'second@example.com');
+    }
+
+    public function test_see_in_email_recipient(AcceptanceTester $I)
+    {
+        $I->sendEmail('userA@example.com', 'Subject Line', "Hello World!");
+        $I->sendEmail('userB@example.com', 'Subject Line', "Hello World!");
+        $I->sendEmail('userC@example.com', 'Subject Line', "Hello World!");
+        $I->seeInLastEmailRecipient('userC@example.com');
+        $I->seeInNthEmailRecipient(2, 'userB@example.com');
+    }
+
+    public function test_see_in_email_recipient_checks_each_recipient(AcceptanceTester $I)
+    {
+        $I->sendEmail(['alice@example.com', 'bob@example.com'], 'Subject Line', "Hello World!");
+        $I->seeInLastEmailRecipient('bob@example.com');
+        $I->expectThrowable(\PHPUnit\Framework\AssertionFailedError::class, function() use ($I) {
+            $I->seeInNthEmailRecipient(1, 'alice@example.com>, <bob');
+        });
+    }
+
+    public function test_see_in_nth_email_to(AcceptanceTester $I)
+    {
+        $user = "userA@example.com";
+        $I->sendEmail($user, 'First Subject', "First");
+        $I->sendEmail('userB@example.com', 'Other Subject', "Other");
+        $I->sendEmail($user, 'Second Subject', "Second");
+        $I->sendEmail($user, 'Third Subject', "Third");
+        $I->seeInNthEmailTo(2, $user, "Second");
+        $I->dontSeeInNthEmailTo(2, $user, "Other");
+        $I->seeInNthEmailSubjectTo(2, $user, 'Second Subject');
+        $I->dontSeeInNthEmailSubjectTo(2, $user, 'Other Subject');
+    }
+
+    public function test_grab_from_nth_email(AcceptanceTester $I)
+    {
+        $I->sendEmail("user@example.com", 'Subject Line', "Hello World!");
+        $I->sendEmail("user@example.com", 'Subject Line', "Hello Codeception!");
+        $I->sendEmail("user@example.com", 'Subject Line', "Hello Again!");
+        $I->assertEquals(['Hello Codeception', 'Codeception'], $I->grabMatchesFromNthEmail(2, "/Hello (Codeception)/"));
+        $I->assertEquals('Hello Codeception', $I->grabFromNthEmail(2, "/Hello (Codeception)/"));
+    }
+
+    public function test_grab_from_nth_email_to(AcceptanceTester $I)
+    {
+        $user = "user@example.com";
+        $I->sendEmail($user, 'Subject Line', "Hello World!");
+        $I->sendEmail("userB@example.com", 'Subject Line', "Hello Other!");
+        $I->sendEmail($user, 'Subject Line', "Hello Codeception!");
+        $I->assertEquals(['Hello Codeception', 'Codeception'], $I->grabMatchesFromNthEmailTo(2, $user, "/Hello (\w+)/"));
+        $I->assertEquals('Hello Codeception', $I->grabFromNthEmailTo(2, $user, "/Hello (\w+)/"));
+    }
+
+    public function test_grab_urls_from_nth_email(AcceptanceTester $I)
+    {
+        $url = "http://example.com/list.php?page=56";
+        $I->sendEmail("user@example.com", 'Subject Line', "I have no URLs.");
+        $I->sendEmail("user@example.com", 'Subject Line', "I'm in $url .");
+        $I->sendEmail("user@example.com", 'Subject Line', "I'm in https://example.org .");
+        $I->assertEquals([$url], $I->grabUrlsFromNthEmail(2));
+    }
+
+    public function test_attachments_in_nth_email(AcceptanceTester $I)
+    {
+        $user = "user@example.com";
+        $attachments = [
+            "image.jpg" => codecept_data_dir('image.jpg'),
+            "lorem.txt" => codecept_data_dir('lorem.txt'),
+        ];
+
+        $I->sendEmail($user, 'Email without attachments', "I have no attachments.");
+        $I->sendEmail($user, 'Email with attachments', "I have attachments.", false, null, $attachments);
+        $I->sendEmail($user, 'Email without attachments', "I have no attachments.");
+
+        $I->assertEquals(['image.jpg', 'lorem.txt'], array_keys($I->grabAttachmentsFromNthEmail(2)));
+        $I->seeAttachmentInNthEmail(2, 'lorem.txt');
+        $I->seeNthEmailAttachmentCount(2, 2);
+        $I->seeNthEmailAttachmentCount(3, 0);
+    }
 }

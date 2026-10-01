@@ -146,39 +146,18 @@ class MailCatcherTest extends \Codeception\Test\Unit
      *
      * @return void
      */
-    public function lastMessageFrom()
+    public function testLastMessageFrom()
     {
-        $handler = new MockHandler([
-            new Response(200, [], json_encode([
-                [
-                    'id' => 1,
-                    'created_at' => date('c'),
-                    'sender' => 'sender@example.com',
-                    'recipients' => ['user@example.com'],
-                ],
-                [
-                    'id' => 2,
-                    'created_at' => date('c'),
-                    'sender' => 'sender2@example.com',
-                    'recipients' => ['user2@example.com'],
-                ],
-                [
-                    'id' => 3,
-                    'created_at' => date('c'),
-                    'sender' => 'sender3@example.com',
-                    'recipients' => ['user3@example.com'],
-                ]
-            ]))
-        ]);
-        $client = new Client(['handler' => $handler]);
-
-        $mailcatcher = new MailCatcherTest_TestClass();
-        $mailcatcher->setClient($client);
-
-        $this->assertEquals(
-            $mailcatcher->getLastMessageFrom('sender2@example.com'),
-            2
+        $mailcatcher = $this->mailcatcherWithMessages(
+            [
+                $this->message(1, 'sender@example.com', ['user@example.com']),
+                $this->message(2, 'sender2@example.com', ['user2@example.com']),
+                $this->message(3, 'sender3@example.com', ['user3@example.com']),
+            ],
+            new Email(2, [], '', ''),
         );
+
+        $this->assertEquals(2, $mailcatcher->lastMessageFrom('sender2@example.com')->getId());
     }
 
     public function testSeeInLastEmailTo()
@@ -262,6 +241,156 @@ class MailCatcherTest extends \Codeception\Test\Unit
 
         $mailcatcher->seeEmailCount(3);
     }
+
+    public function testLastMessageUsesIdAsTieBreakerForSameTimestamp()
+    {
+        $mailcatcher = $this->mailcatcherWithMessages(
+            [$this->message(9), $this->message(10)],
+            new Email(9, [], '', 'ninth'),
+            new Email(10, [], '', 'tenth'),
+        );
+
+        $this->assertEquals(10, $mailcatcher->lastMessage()->getId());
+    }
+
+    public function testNthMessageCountsFromTheFirstReceivedEmail()
+    {
+        $mailcatcher = $this->mailcatcherWithMessages(
+            [$this->message(3), $this->message(1), $this->message(2)],
+            new Email(2, [], '', 'second'),
+        );
+
+        $this->assertEquals(2, $mailcatcher->nthMessage(2)->getId());
+    }
+
+    public function testNthMessageOrdersByReceivedTimeBeforeId()
+    {
+        $messages = [
+            $this->message(1, createdAt: '2026-09-30T10:00:02+00:00'),
+            $this->message(2, createdAt: '2026-09-30T10:00:01+00:00'),
+            $this->message(3, createdAt: '2026-09-30T10:00:00+00:00'),
+        ];
+        $emails = [new Email(1, [], '', 'newest'), new Email(3, [], '', 'oldest')];
+
+        $this->assertEquals(3, $this->mailcatcherWithMessages($messages, ...$emails)->nthMessage(1)->getId());
+        $this->assertEquals(1, $this->mailcatcherWithMessages($messages, ...$emails)->nthMessage(3)->getId());
+        $this->assertEquals(1, $this->mailcatcherWithMessages($messages, ...$emails)->lastMessage()->getId());
+    }
+
+    public function testNthMessageNoMessages()
+    {
+        $mailcatcher = $this->mailcatcherWithMessages([]);
+
+        $this->expectException(AssertionFailedError::class);
+        $this->expectExceptionMessage('No messages received');
+
+        $mailcatcher->nthMessage(1);
+    }
+
+    public function testNthMessageBeyondReceivedEmails()
+    {
+        $mailcatcher = $this->mailcatcherWithMessages([$this->message(1)]);
+
+        $this->expectException(AssertionFailedError::class);
+        $this->expectExceptionMessage('No message found at position 2');
+
+        $mailcatcher->nthMessage(2);
+    }
+
+    public function testNthMessageRejectsPositionBelowOne()
+    {
+        $mailcatcher = $this->mailcatcherWithMessages([$this->message(1)]);
+
+        $this->expectException(AssertionFailedError::class);
+        $this->expectExceptionMessage('Position must be 1 or greater, 0 given');
+
+        $mailcatcher->nthMessage(0);
+    }
+
+    public function testNthMessageToCountsOnlyEmailsSentToAddress()
+    {
+        $mailcatcher = $this->mailcatcherWithMessages(
+            [
+                $this->message(1, recipients: ['<userA@example.com>', '<userA@example.com.test>']),
+                $this->message(2, recipients: ['<userB@example.com>']),
+                $this->message(3, recipients: ['<userA@example.com>']),
+            ],
+            new Email(3, [], '', 'second to userA'),
+        );
+
+        $this->assertEquals(3, $mailcatcher->nthMessageTo(2, 'userA@example.com')->getId());
+    }
+
+    public function testSeeInLastEmailSender()
+    {
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setLastMessage(new Email(1, [], '', '', '<sender@example.com>'));
+
+        $mailcatcher->seeInLastEmailSender('sender@example.com');
+    }
+
+    public function testSeeInLastEmailSenderFail()
+    {
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setLastMessage(new Email(1, [], '', '', '<sender@example.com>'));
+
+        $this->expectException(AssertionFailedError::class);
+
+        $mailcatcher->seeInLastEmailSender('other@example.com');
+    }
+
+    public function testSeeInLastEmailRecipientMatchesAnyRecipient()
+    {
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setLastMessage(new Email(1, ['<userA@example.com>', '<userB@example.com>'], '', ''));
+
+        $mailcatcher->seeInLastEmailRecipient('userB@example.com');
+    }
+
+    public function testSeeInLastEmailRecipientDoesNotMatchAcrossRecipients()
+    {
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setLastMessage(new Email(1, ['<alice@example.com>', '<bob@example.com>'], '', ''));
+
+        $this->expectException(AssertionFailedError::class);
+
+        $mailcatcher->seeInLastEmailRecipient('<alice@example.com>, <bob@example.com>');
+    }
+
+    public function testSeeInLastEmailRecipientFail()
+    {
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setLastMessage(new Email(1, ['<userA@example.com>'], '', ''));
+
+        $this->expectException(AssertionFailedError::class);
+
+        $mailcatcher->seeInLastEmailRecipient('userB@example.com');
+    }
+
+    private function mailcatcherWithMessages(array $messages, Email ...$emails): MailCatcherTest_TestClass
+    {
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setClient(new Client(['handler' => new MockHandler([
+            new Response(200, [], json_encode($messages)),
+        ])]));
+        $mailcatcher->setEmails(...$emails);
+
+        return $mailcatcher;
+    }
+
+    private function message(
+        int $id,
+        string $sender = '<sender@example.com>',
+        array $recipients = ['<user@example.com>'],
+        string $createdAt = '2026-09-30T10:00:00+00:00'
+    ): array {
+        return [
+            'id' => $id,
+            'created_at' => $createdAt,
+            'sender' => $sender,
+            'recipients' => $recipients,
+        ];
+    }
 }
 
 class MailCatcherTest_TestClass extends MailCatcher
@@ -270,9 +399,26 @@ class MailCatcherTest_TestClass extends MailCatcher
     private $lastMessageTo;
     private $lastMessageFrom;
 
+    /**
+     * @var array<int, Email>
+     */
+    private array $emails = [];
+
     public function __construct()
     {
 
+    }
+
+    public function setEmails(Email ...$emails)
+    {
+        foreach ($emails as $email) {
+            $this->emails[$email->getId()] = $email;
+        }
+    }
+
+    protected function emailFromId($id): Email
+    {
+        return $this->emails[$id] ?? parent::emailFromId($id);
     }
 
     public function getClient()
