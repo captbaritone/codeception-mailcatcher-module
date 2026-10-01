@@ -10,7 +10,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 class Acceptance extends \Codeception\Module
 {
     public function sendEmail(
-        string $to,
+        string|array $to,
         string $subject,
         string $body,
         bool $isHtml = false,
@@ -29,7 +29,9 @@ class Acceptance extends \Codeception\Module
             $phpmailer->addAttachment($attachment, $attachmentName);
         }
 
-        $phpmailer->addAddress($to);
+        foreach ((array) $to as $address) {
+            $phpmailer->addAddress($address);
+        }
         $phpmailer->setFrom($from);
         $phpmailer->Subject = $subject;
         $phpmailer->Body = $body;

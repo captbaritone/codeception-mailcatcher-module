@@ -333,6 +333,16 @@ class MailCatcherTest extends \Codeception\Test\Unit
         $mailcatcher->seeInLastEmailRecipient('userB@example.com');
     }
 
+    public function testSeeInLastEmailRecipientDoesNotMatchAcrossRecipients()
+    {
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setLastMessage(new Email(1, ['<alice@example.com>', '<bob@example.com>'], '', ''));
+
+        $this->expectException(AssertionFailedError::class);
+
+        $mailcatcher->seeInLastEmailRecipient('<alice@example.com>, <bob@example.com>');
+    }
+
     public function testSeeInLastEmailRecipientFail()
     {
         $mailcatcher = new MailCatcherTest_TestClass();

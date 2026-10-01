@@ -548,7 +548,16 @@ class MailCatcher extends Module
 
     protected function seeInEmailRecipients(Email $email, string $expected): void
     {
-        $this->assertStringContainsString($expected, implode(', ', $email->getRecipients()), "Email Recipients Contain");
+        $recipients = $email->getRecipients();
+        $matchingRecipients = array_filter(
+            $recipients,
+            static fn (string $recipient): bool => str_contains($recipient, $expected)
+        );
+
+        $this->assertNotEmpty(
+            $matchingRecipients,
+            sprintf('Failed asserting that one of the email recipients [%s] contains "%s".', implode(', ', $recipients), $expected)
+        );
     }
 
     protected function grabMatchesFromEmail(Email $email, string $regex): array

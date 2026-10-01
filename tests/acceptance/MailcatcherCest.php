@@ -329,6 +329,15 @@ class MailcatcherCest
         $I->seeInNthEmailRecipient(2, 'userB@example.com');
     }
 
+    public function test_see_in_email_recipient_checks_each_recipient(AcceptanceTester $I)
+    {
+        $I->sendEmail(['alice@example.com', 'bob@example.com'], 'Subject Line', "Hello World!");
+        $I->seeInLastEmailRecipient('bob@example.com');
+        $I->expectThrowable(\PHPUnit\Framework\AssertionFailedError::class, function() use ($I) {
+            $I->seeInNthEmailRecipient(1, 'alice@example.com>, <bob');
+        });
+    }
+
     public function test_see_in_nth_email_to(AcceptanceTester $I)
     {
         $user = "userA@example.com";
