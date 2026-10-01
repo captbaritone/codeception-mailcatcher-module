@@ -165,6 +165,14 @@ class MailcatcherCest
         $I->assertEquals($url, $urls[0]);
     }
 
+    public function test_grab_urls_from_html_email_with_multiple_query_parameters(AcceptanceTester $I)
+    {
+        $I->sendEmail("user@example.com", 'Html email with urls', "<html><body><a href='https://example.com/confirm?id=1&amp;token=abc'>Confirm</a></body></html>", true);
+        $urls = $I->grabUrlsFromLastEmail();
+
+        $I->assertEquals(['https://example.com/confirm?id=1&token=abc'], $urls);
+    }
+
     /**
      * @param AcceptanceTester $I
      * @param \Codeception\Example $example

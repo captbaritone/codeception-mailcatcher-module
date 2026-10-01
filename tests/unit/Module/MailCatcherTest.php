@@ -504,6 +504,17 @@ class MailCatcherTest extends \Codeception\Test\Unit
         }
     }
 
+    public function testGrabUrlsFromLastEmailDecodesHtmlEntities()
+    {
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setLastMessage(new Email(1, [], '', $this->mimeSource(
+            'text/html',
+            '<a href="https://example.com/confirm?id=1&amp;token=abc">Confirm</a>'
+        )));
+
+        $this->assertEquals(['https://example.com/confirm?id=1&token=abc'], $mailcatcher->grabUrlsFromLastEmail());
+    }
+
     private function mailcatcherWithMessages(array $messages, Email ...$emails): MailCatcherTest_TestClass
     {
         $mailcatcher = new MailCatcherTest_TestClass();

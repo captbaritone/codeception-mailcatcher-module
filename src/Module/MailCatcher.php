@@ -610,7 +610,12 @@ class MailCatcher extends Module
         preg_match_all($regex, $message->getTextContent() ?? '', $textMatches);
         preg_match_all($regex, $message->getHtmlContent() ?? '', $htmlMatches);
 
-        return array_merge($textMatches[0], $htmlMatches[0]);
+        $htmlUrls = array_map(
+            static fn (string $url): string => html_entity_decode($url, ENT_QUOTES | ENT_HTML5),
+            $htmlMatches[0]
+        );
+
+        return array_merge($textMatches[0], $htmlUrls);
     }
 
     /**
