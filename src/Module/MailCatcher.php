@@ -288,6 +288,29 @@ class MailCatcher extends Module
     }
 
     /**
+     * Return the URL of the first link with an exact, case-sensitive label
+     * in the last email's HTML body. Fail if no matching link has an href.
+     */
+    public function grabUrlForLinkFromLastEmail(string $label): string
+    {
+        $message = Message::from($this->lastMessage()->getSource(), false);
+        $html = $message->getHtmlContent();
+
+        if ($html !== null && $html !== '') {
+            $document = new \DOMDocument();
+            $document->loadHTML('<?xml encoding="UTF-8">' . $html, LIBXML_NONET | LIBXML_NOERROR | LIBXML_NOWARNING);
+
+            foreach ($document->getElementsByTagName('a') as $link) {
+                if ($link->hasAttribute('href') && $link->textContent === $label) {
+                    return $link->getAttribute('href');
+                }
+            }
+        }
+
+        $this->fail("No link found with label: {$label}");
+    }
+
+    /**
      * Grab Attachments From Email
      *
      * Returns array with the format [ [filename1 => bytes1], [filename2 => bytes2], ...]

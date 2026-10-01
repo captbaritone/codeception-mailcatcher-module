@@ -227,6 +227,25 @@ Example:
     $urls = $I->grabUrlsFromLastEmail();
     ?>
 
+### grabUrlForLinkFromLastEmail
+
+Returns the `href` of the first link whose text exactly matches the label in
+the last email's HTML body. Matching is case-sensitive. Nested tags and HTML
+entities are decoded. Whitespace in the label is preserved.
+
+Fails if the email has no HTML body or no matching link with an `href`.
+
+Example:
+
+```php
+$url = $I->grabUrlForLinkFromLastEmail('Second link');
+```
+
+For `<a href="http://second-link.com">Second link</a>`, this returns
+`http://second-link.com`.
+
+* Param $label
+
 ### lastMessageFrom
 
 Grab the full email object sent to an address.
