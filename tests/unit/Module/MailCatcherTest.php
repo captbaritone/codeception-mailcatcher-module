@@ -263,6 +263,20 @@ class MailCatcherTest extends \Codeception\Test\Unit
         $this->assertEquals(2, $mailcatcher->nthMessage(2)->getId());
     }
 
+    public function testNthMessageOrdersByReceivedTimeBeforeId()
+    {
+        $messages = [
+            $this->message(1, createdAt: '2026-09-30T10:00:02+00:00'),
+            $this->message(2, createdAt: '2026-09-30T10:00:01+00:00'),
+            $this->message(3, createdAt: '2026-09-30T10:00:00+00:00'),
+        ];
+        $emails = [new Email(1, [], '', 'newest'), new Email(3, [], '', 'oldest')];
+
+        $this->assertEquals(3, $this->mailcatcherWithMessages($messages, ...$emails)->nthMessage(1)->getId());
+        $this->assertEquals(1, $this->mailcatcherWithMessages($messages, ...$emails)->nthMessage(3)->getId());
+        $this->assertEquals(1, $this->mailcatcherWithMessages($messages, ...$emails)->lastMessage()->getId());
+    }
+
     public function testNthMessageNoMessages()
     {
         $mailcatcher = $this->mailcatcherWithMessages([]);
@@ -364,11 +378,15 @@ class MailCatcherTest extends \Codeception\Test\Unit
         return $mailcatcher;
     }
 
-    private function message(int $id, string $sender = '<sender@example.com>', array $recipients = ['<user@example.com>']): array
-    {
+    private function message(
+        int $id,
+        string $sender = '<sender@example.com>',
+        array $recipients = ['<user@example.com>'],
+        string $createdAt = '2026-09-30T10:00:00+00:00'
+    ): array {
         return [
             'id' => $id,
-            'created_at' => '2026-09-30T10:00:00+00:00',
+            'created_at' => $createdAt,
             'sender' => $sender,
             'recipients' => $recipients,
         ];

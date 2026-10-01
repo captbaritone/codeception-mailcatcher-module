@@ -299,6 +299,8 @@ Every "last email" action has an "nth email" counterpart that takes the
 position as its first argument. Positions start at 1 and count in the order
 the emails were received, so `1` is the first email and `2` the second.
 For the `...To` variants, only emails sent to the given address are counted.
+Like the existing `...To` actions, addresses match by substring, so
+`user@example.com` also matches `superuser@example.com`.
 
 | Last email | Nth email |
 | --- | --- |
