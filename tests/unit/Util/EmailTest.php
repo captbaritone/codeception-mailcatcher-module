@@ -14,6 +14,18 @@ class EmailTest extends \Codeception\Test\Unit
         $this->assertEquals('Source body', $email->getSource());
     }
 
+    public function testMissingSubjectIsEmpty()
+    {
+        $email = Email::createFromMailcatcherData([
+            'id' => 1,
+            'recipients' => ['some@email.com'],
+            'subject' => null,
+            'source' => 'Source body'
+        ]);
+
+        $this->assertSame('', $email->getSubject());
+    }
+
     public function testCreateFromMailcatcherData()
     {
         $email = Email::createFromMailcatcherData([
