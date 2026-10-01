@@ -95,6 +95,24 @@ class MailCatcherTest extends \Codeception\Test\Unit
         $mailcatcher->dontSeeInLastEmailSubject('Hello world');
     }
 
+    public function testDontSeeInLastEmailSubjectWithoutSubject()
+    {
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setLastMessage(new Email(1, [], null, ''));
+
+        $mailcatcher->dontSeeInLastEmailSubject('Hello world');
+    }
+
+    public function testSeeInLastEmailSubjectWithoutSubjectFails()
+    {
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setLastMessage(new Email(1, [], null, ''));
+
+        $this->expectException(AssertionFailedError::class);
+
+        $mailcatcher->seeInLastEmailSubject('Hello world');
+    }
+
     public function testLastMessageToNoMessages()
     {
         $handler = new MockHandler([

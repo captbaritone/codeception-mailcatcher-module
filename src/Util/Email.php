@@ -36,7 +36,7 @@ class Email
 
     public function getSubject(): string
     {
-        return $this->subject;
+        return $this->subject ?? '';
     }
 
     public function getSource(): string
