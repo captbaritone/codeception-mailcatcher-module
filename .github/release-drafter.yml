@@ -19,7 +19,7 @@ categories:
   - title: Maintenance
 
 category-template: '### $TITLE'
-change-template: '* $TITLE (#$NUMBER) $AUTHORS'
+change-template: '* $TITLE (#$NUMBER) @$AUTHOR'
 change-title-escapes: '\<*_&'
 no-changes-template: '* No changes'
 template: |
