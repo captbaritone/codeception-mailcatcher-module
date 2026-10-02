@@ -482,6 +482,39 @@ class MailCatcherTest extends \Codeception\Test\Unit
         $mailcatcher->seeInLastEmailRecipient('userB@example.com');
     }
 
+    public function testGrabUrlsFromSinglePartEmailsRaisesNoDeprecation()
+    {
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $sourceDirectory = dirname(__DIR__, 3) . '/src/';
+        set_error_handler(static function (int $severity, string $message, string $file, int $line) use ($sourceDirectory): bool {
+            if (!str_starts_with($file, $sourceDirectory)) {
+                return false;
+            }
+            throw new \ErrorException($message, 0, $severity, $file, $line);
+        });
+
+        try {
+            $mailcatcher->setLastMessage(new Email(1, [], '', $this->mimeSource('text/plain', 'Visit https://example.com/a')));
+            $this->assertEquals(['https://example.com/a'], $mailcatcher->grabUrlsFromLastEmail());
+
+            $mailcatcher->setLastMessage(new Email(1, [], '', $this->mimeSource('text/html', '<a href="https://example.com/b">B</a>')));
+            $this->assertEquals(['https://example.com/b'], $mailcatcher->grabUrlsFromLastEmail());
+        } finally {
+            restore_error_handler();
+        }
+    }
+
+    public function testGrabUrlsFromLastEmailDecodesHtmlEntities()
+    {
+        $mailcatcher = new MailCatcherTest_TestClass();
+        $mailcatcher->setLastMessage(new Email(1, [], '', $this->mimeSource(
+            'text/html',
+            '<a href="https://example.com/confirm?id=1&amp;token=abc">Confirm</a>'
+        )));
+
+        $this->assertEquals(['https://example.com/confirm?id=1&token=abc'], $mailcatcher->grabUrlsFromLastEmail());
+    }
+
     private function mailcatcherWithMessages(array $messages, Email ...$emails): MailCatcherTest_TestClass
     {
         $mailcatcher = new MailCatcherTest_TestClass();
@@ -505,6 +538,17 @@ class MailCatcherTest extends \Codeception\Test\Unit
             'sender' => $sender,
             'recipients' => $recipients,
         ];
+    }
+
+    private function mimeSource(string $contentType, string $body): string
+    {
+        return "From: sender@example.com\r\n"
+            . "To: user@example.com\r\n"
+            . "Subject: Test\r\n"
+            . "MIME-Version: 1.0\r\n"
+            . "Content-Type: {$contentType}; charset=UTF-8\r\n"
+            . "\r\n"
+            . $body;
     }
 }
 
