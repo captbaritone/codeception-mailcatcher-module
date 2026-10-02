@@ -28,6 +28,9 @@
         "codeception/module-asserts": "^3",
         "phpmailer/phpmailer": "^7.1.1"
     },
+    "conflict": {
+        "phpunit/phpunit": "13.4.0"
+    },
     "suggest": {
         "codeception/module-asserts": "Required for assertion actions"
     }
